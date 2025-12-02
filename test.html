@@ -1,135 +1,153 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Login DEBUG MODE</title>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Enterprise Large & Mega Projects — Login</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
 
 <style>
+:root{
+  --bg:#f4f1fb;
+  --card:#fff;
+  --muted:#6b6b6b;
+  --btn-start:#A666B0;
+  --btn-end:#573B92;
+  --accent:#00a3e0;
+}
+
 body{
-  background:#faf7ff;
-  font-family:Arial, sans-serif;
-  padding:20px;
+  margin:0;
+  background:var(--bg);
+  font-family:'Cairo',sans-serif;
+}
+
+/* HEADER */
+.header{
+  max-width:420px;
+  margin:26px auto 0;
+  background:linear-gradient(135deg, var(--btn-start), var(--btn-end));
+  padding:26px 16px 30px;
+  border-radius:20px;
+  text-align:center;
+  color:#fff;
+  box-shadow:0 6px 20px rgba(111,47,144,0.22);
+}
+.header-title{font-size:22px;font-weight:700;}
+.header-sub{font-size:15px;margin-top:6px;opacity:0.9;}
+
+/* CARD */
+.wrap{
+  display:flex;justify-content:center;
+  padding:22px;margin-top:20px;
 }
 .card{
-  max-width:420px;
-  margin:auto;
-  background:white;
-  padding:20px;
-  border-radius:14px;
-  box-shadow:0 4px 20px rgba(0,0,0,0.1);
+  width:100%;max-width:420px;
+  background:#fff;padding:26px;border-radius:20px;
+  box-shadow:0 8px 28px rgba(0,0,0,0.08);
 }
+
+/* INPUT */
+.label{font-size:14px;color:var(--muted);margin-top:14px;}
 .input{
-  width:100%;
-  padding:12px;
-  margin-top:8px;
-  border:1px solid #ccc;
-  border-radius:8px;
+  width:100%;padding:14px 16px;
+  border:1px solid #ddd;border-radius:12px;
+  font-size:16px;margin-top:6px;
 }
+.input:focus{
+  outline:none;border-color:var(--accent);
+  box-shadow:0 0 0 3px rgba(0,163,224,0.25);
+}
+
+/* BUTTON */
 .btn{
-  width:100%;
-  padding:14px;
-  margin-top:14px;
-  background:#673ab7;
-  color:white;
-  border:none;
-  border-radius:8px;
-  font-size:16px;
+  margin-top:22px;width:100%;
+  padding:16px;border:none;border-radius:14px;
+  color:#fff;font-size:17px;
+  cursor:pointer;
+  background:linear-gradient(135deg,var(--btn-start),var(--btn-end));
+  box-shadow:0 6px 14px rgba(111,47,144,0.30),
+              inset 0 2px 4px rgba(255,255,255,0.22);
 }
-#debugBox{
-  background:black;
-  color:#0f0;
-  font-family:monospace;
-  padding:12px;
-  margin-top:20px;
-  height:240px;
-  overflow:auto;
-  border-radius:8px;
-  white-space:pre-wrap;
-}
+.btn:active{transform:scale(0.96);}
+
+.msg{text-align:center;margin-top:12px;font-weight:600;height:20px;}
 </style>
 </head>
 
 <body>
 
-<div class="card">
-  <h2>Login (Debug Mode)</h2>
-
-  <label>ID</label>
-  <input id="userid" class="input" type="text">
-
-  <label>Password</label>
-  <input id="password" class="input" type="password">
-
-  <button class="btn" onclick="login()">Login</button>
-
-  <div id="debugBox">DEBUG LOG:\n</div>
+<div class="header">
+  <div class="header-title">Enterprise Large and Mega Projects</div>
+  <div class="header-sub">Attendance Log</div>
 </div>
+
+<main class="wrap">
+  <section class="card">
+
+    <label class="label">ID</label>
+    <input id="userid" class="input" type="text">
+
+    <label class="label">Password</label>
+    <input id="password" class="input" type="password">
+
+    <button class="btn" onclick="login()">Login</button>
+
+    <div id="msg" class="msg"></div>
+
+  </section>
+</main>
 
 <script>
 const API = "https://script.google.com/macros/s/AKfycbwcFFZH97OAI8L4ZaajWqRnps4T1kw7Tm6Enbi4-YYJ-VJsl8ZwcGvWHjELzOUmvvqd/exec";
 
-function log(txt){
-  const box = document.getElementById("debugBox");
-  box.textContent += txt + "\n";
-  box.scrollTop = box.scrollHeight;
-}
+// لو فيه سيشن جاهزة
+if(localStorage.getItem("ID")) location.href = "attendance.html";
 
 async function login(){
   const id = document.getElementById("userid").value.trim();
   const pass = document.getElementById("password").value.trim();
-
-  log("-----------------------------");
-  log("Start Login…");
-  log("ID = " + id);
-  log("Password entered");
+  const msg = document.getElementById("msg");
 
   if(!id || !pass){
-    log("❌ Missing fields");
+    msg.style.color="red";
+    msg.textContent="Please fill all fields";
     return;
   }
 
-  log("Preparing request…");
+  msg.style.color="#444";
+  msg.textContent="Checking...";
 
   try{
-    log("Sending POST to API: " + API);
-
-    const r = await fetch(API, {
+    const res = await fetch(API,{
       method:"POST",
-      headers: {"Content-Type": "application/json"},
-      body: JSON.stringify({
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({
         action:"login",
         ID:id,
         password:pass
       })
     });
 
-    log("Fetch response received.");
-    log("Status Code = " + r.status);
+    const data = await res.json();
 
-    let txt = await r.text();
-    log("Raw Response:\n" + txt);
+    if(data.status === "success"){
+      msg.style.color="green";
+      msg.textContent="Success ✔";
 
-    let j;
-    try{
-      j = JSON.parse(txt);
-      log("Parsed JSON OK.");
-    } catch(e){
-      log("❌ JSON Parse Error: " + e);
-      return;
-    }
+      localStorage.setItem("ID", data.ID);
+      localStorage.setItem("name", data.name);
 
-    log("JSON Status = " + j.status);
-
-    if(j.status === "success"){
-      log("✔ Login SUCCESS. Name = " + j.name);
+      setTimeout(()=> location.href="attendance.html", 300);
     } else {
-      log("❌ Login FAILED.");
+      msg.style.color="red";
+      msg.textContent="Invalid ID or Password";
     }
 
-  } catch(err){
-    log("❌ FETCH ERROR:");
-    log(err.toString());
+  }catch(e){
+    msg.style.color="red";
+    msg.textContent="Connection Error";
   }
 }
 </script>
