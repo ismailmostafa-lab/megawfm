@@ -212,11 +212,14 @@ async function submitRequest(){
     added_by: addedBy
   };
 
-  try {
-    const res = await fetch(API, {
-      method:"POST",
-      body: JSON.stringify(payload)
-    });
+  const res = await fetch(API, {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify(payload)
+});
+
 
     const j = await res.json();
 
