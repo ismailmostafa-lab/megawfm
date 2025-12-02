@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Enterprise Large and Mega Projects — Attendance Log</title>
+<title>Enterprise Large and Mega Projects — Login</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
 
@@ -32,7 +32,7 @@ html,body{
   to{opacity:1; transform:none;}
 }
 
-/* ================= HEADER BOX ================= */
+/* HEADER */
 .header-box{
   width:100%;
   max-width:420px;
@@ -44,27 +44,23 @@ html,body{
   color:#fff;
   box-shadow:0 6px 20px rgba(111,47,144,0.22);
 }
-
 .header-title{
   font-size:22px;
   font-weight:700;
-  letter-spacing:0.2px;
 }
-
 .header-sub{
   margin-top:6px;
   font-size:15px;
   opacity:0.92;
 }
 
-/* ================= LAYOUT ================= */
+/* CARD */
 .wrap{
   display:flex;
   justify-content:center;
   padding:22px;
   margin-top:20px;
 }
-
 .card{
   width:100%;
   max-width:420px;
@@ -74,13 +70,12 @@ html,body{
   box-shadow:0 8px 28px rgba(0,0,0,0.08);
 }
 
-/* ================= INPUTS ================= */
+/* INPUT */
 .label{
   font-size:14px;
   color:var(--muted);
   margin-top:14px;
 }
-
 .input{
   width:100%;
   padding:14px 16px;
@@ -90,14 +85,13 @@ html,body{
   margin-top:6px;
   transition:0.25s;
 }
-
 .input:focus{
   outline:none;
   border-color:var(--accent);
   box-shadow:0 0 0 3px rgba(0,163,224,0.35);
 }
 
-/* ================= MODERN TRUE 3D GRADIENT BUTTON ================= */
+/* BUTTON */
 .btn{
   width:100%;
   margin-top:22px;
@@ -109,25 +103,18 @@ html,body{
 
   background:linear-gradient(135deg, var(--btn-start), var(--btn-end));
 
-  /* TRUE 3D EFFECT FOR MOBILE */
   box-shadow:
-    0 6px 14px rgba(111,47,144,0.30),   /* العمق الأساسي */
-    0 3px 6px rgba(0,0,0,0.18),         /* edge shadow */
-    inset 0 2px 4px rgba(255,255,255,0.22); /* inner highlight برّاق */
+    0 6px 14px rgba(111,47,144,0.30),
+    0 3px 6px rgba(0,0,0,0.18),
+    inset 0 2px 4px rgba(255,255,255,0.22);
 
   cursor:pointer;
   transition:0.18s ease;
 }
-
 .btn:active{
   transform:scale(0.96);
-  box-shadow:
-    0 3px 8px rgba(111,47,144,0.25),
-    0 2px 4px rgba(0,0,0,0.15),
-    inset 0 1px 3px rgba(255,255,255,0.20);
 }
 
-/* ================= TEXT ================= */
 .msg{
   height:22px;
   text-align:center;
@@ -147,13 +134,13 @@ html,body{
 
 <body>
 
-<!-- HEADER BOX -->
+<!-- HEADER -->
 <div class="header-box">
   <div class="header-title">Enterprise Large and Mega Projects</div>
   <div class="header-sub">Attendance Log</div>
 </div>
 
-<!-- CARD -->
+<!-- FORM -->
 <main class="wrap">
   <section class="card">
 
@@ -175,45 +162,58 @@ html,body{
 </main>
 
 <script>
-const API = "https://script.google.com/macros/s/AKfycbxvKCDcuXm8b632N_sMN6Sy_wTCSBKXPY-ZK4FVG7AgCEyPz50K0m1btEgNkEq80qb2/exec";
+const API = "https://script.google.com/macros/s/AKfycbw6PY9mv4bq6tRN6mUKF3QqtOafJ5Eo25shp64Cez6JxKo_KNy2naJ1oBSULqgNgR_0/exec";
 
-if(localStorage.getItem('ID')) location.href = 'attendance.html';
+if(localStorage.getItem('ID')){
+  location.href = "logs.html";
+}
 
 async function login(){
-  const id = document.getElementById('userid').value.trim();
-  const pass = document.getElementById('password').value.trim();
-  const msg = document.getElementById('msg');
+  const id = document.getElementById("userid").value.trim();
+  const pass = document.getElementById("password").value.trim();
+  const msg = document.getElementById("msg");
 
   if(!id || !pass){
-    msg.style.color='red';
-    msg.textContent='Please fill all fields';
+    msg.style.color="red";
+    msg.textContent="Please fill all fields";
     return;
   }
 
-  msg.style.color='#666';
-  msg.textContent='Checking...';
+  msg.style.color="#666";
+  msg.textContent="Checking...";
 
   try{
-    const r = await fetch(API,{
-      method:'POST',
-      body:JSON.stringify({action:'login', ID:id, password:pass})
+    const r = await fetch(API, {
+      method:"POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({
+        action:"login",
+        ID:id,
+        password:pass
+      })
     });
+
     const j = await r.json();
 
-    if(j.status === 'success'){
-      localStorage.setItem('ID', j.ID);
-      localStorage.setItem('name', j.name);
-      msg.style.color='green';
-      msg.textContent='OK';
-      setTimeout(()=> location.href='attendance.html', 250);
+    if(j.status === "success"){
+      msg.style.color="green";
+      msg.textContent="Successfully logged in ✔";
+
+      localStorage.setItem("ID", j.ID);
+      localStorage.setItem("name", j.name);
+
+      setTimeout(() => {
+        location.href = "logs.html";
+      }, 2000);  // ← Auto redirect after 2 seconds
+
     } else {
-      msg.style.color='red';
-      msg.textContent='Invalid ID or Password';
+      msg.style.color="red";
+      msg.textContent="Invalid ID or Password";
     }
 
-  }catch(e){
-    msg.style.color='red';
-    msg.textContent='Connection Error';
+  } catch(err){
+    msg.style.color="red";
+    msg.textContent="Connection Error";
   }
 }
 </script>
