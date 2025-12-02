@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html lang="en">
 <head>
@@ -185,17 +184,17 @@ html,body{
 
 <script>
 /* ===== API + LOGIN DATA ===== */
-const API = "https://script.google.com/macros/s/AKfycbw6PY9mv4bq6tRN6mUKF3QqtOafJ5Eo25shp64Cez6JxKo_KNy2naJ1oBSULqgNgR_0/exec";   // ← حط لينك Google Apps Script هنا
+const API = "https://script.google.com/macros/s/AKfycbw6PY9mv4bq6tRN6mUKF3QqtOafJ5Eo25shp64Cez6JxKo_KNy2naJ1oBSULqgNgR_0/exec";
 const addedBy = localStorage.getItem("ID") || "unknown";
 
 /* ===== SUBMIT FUNCTION ===== */
-async function submitRequest(){
+async function submitRequest() {
   const name = document.getElementById("name").value;
   const date = document.getElementById("date").value;
   const type = document.getElementById("type").value;
   const msg = document.getElementById("msg");
 
-  if(!name || !date || !type){
+  if (!name || !date || !type) {
     msg.style.color = "red";
     msg.textContent = "Please complete all fields!";
     return;
@@ -212,18 +211,16 @@ async function submitRequest(){
     added_by: addedBy
   };
 
-  const res = await fetch(API, {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json"
-  },
-  body: JSON.stringify(payload)
-});
-
+  try {
+    const res = await fetch(API, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
 
     const j = await res.json();
 
-    if(j.status === "saved"){
+    if (j.status === "saved") {
       msg.style.color = "green";
       msg.textContent = "Request submitted ✔";
       document.getElementById("name").selectedIndex = 0;
@@ -234,7 +231,7 @@ async function submitRequest(){
       msg.textContent = "Failed — check server.";
     }
 
-  } catch(e){
+  } catch (e) {
     msg.style.color = "red";
     msg.textContent = "Connection Error";
   }
