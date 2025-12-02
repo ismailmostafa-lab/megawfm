@@ -1,154 +1,91 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html>
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Enterprise Large & Mega Projects — Login</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
-
-<style>
-:root{
-  --bg:#f4f1fb;
-  --card:#fff;
-  --muted:#6b6b6b;
-  --btn-start:#A666B0;
-  --btn-end:#573B92;
-  --accent:#00a3e0;
-}
-
-body{
-  margin:0;
-  background:var(--bg);
-  font-family:'Cairo',sans-serif;
-}
-
-/* HEADER */
-.header{
-  max-width:420px;
-  margin:26px auto 0;
-  background:linear-gradient(135deg, var(--btn-start), var(--btn-end));
-  padding:26px 16px 30px;
-  border-radius:20px;
-  text-align:center;
-  color:#fff;
-  box-shadow:0 6px 20px rgba(111,47,144,0.22);
-}
-.header-title{font-size:22px;font-weight:700;}
-.header-sub{font-size:15px;margin-top:6px;opacity:0.9;}
-
-/* CARD */
-.wrap{
-  display:flex;justify-content:center;
-  padding:22px;margin-top:20px;
-}
-.card{
-  width:100%;max-width:420px;
-  background:#fff;padding:26px;border-radius:20px;
-  box-shadow:0 8px 28px rgba(0,0,0,0.08);
-}
-
-/* INPUT */
-.label{font-size:14px;color:var(--muted);margin-top:14px;}
-.input{
-  width:100%;padding:14px 16px;
-  border:1px solid #ddd;border-radius:12px;
-  font-size:16px;margin-top:6px;
-}
-.input:focus{
-  outline:none;border-color:var(--accent);
-  box-shadow:0 0 0 3px rgba(0,163,224,0.25);
-}
-
-/* BUTTON */
-.btn{
-  margin-top:22px;width:100%;
-  padding:16px;border:none;border-radius:14px;
-  color:#fff;font-size:17px;
-  cursor:pointer;
-  background:linear-gradient(135deg,var(--btn-start),var(--btn-end));
-  box-shadow:0 6px 14px rgba(111,47,144,0.30),
-              inset 0 2px 4px rgba(255,255,255,0.22);
-}
-.btn:active{transform:scale(0.96);}
-
-.msg{text-align:center;margin-top:12px;font-weight:600;height:20px;}
-</style>
+  <base target="_top">
+  <style>
+    body{
+      height:100vh;
+      margin:0;
+      background:#f5f6fa;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      font-family:'Cairo',sans-serif;
+    }
+    .box{
+      width:350px;
+      background:white;
+      padding:30px;
+      border-radius:14px;
+      box-shadow:0 4px 20px rgba(0,0,0,0.08);
+    }
+    h2{
+      text-align:center;
+      margin-top:0;
+      margin-bottom:25px;
+      font-weight:600;
+    }
+    input{
+      width:100%;
+      padding:12px;
+      margin-top:12px;
+      border:1px solid #ddd;
+      border-radius:8px;
+      font-size:15px;
+    }
+    button{
+      width:100%;
+      padding:12px;
+      margin-top:20px;
+      background:#007bff;
+      color:white;
+      border:0;
+      border-radius:8px;
+      font-size:16px;
+      cursor:pointer;
+    }
+    #msg{
+      margin-top:12px;
+      font-size:14px;
+      text-align:center;
+      color:red;
+    }
+  </style>
 </head>
 
 <body>
+  <div class="box">
+    <h2>Login</h2>
 
-<div class="header">
-  <div class="header-title">Enterprise Large and Mega Projects</div>
-  <div class="header-sub">Attendance Log</div>
-</div>
+    <input id="username" placeholder="Username">
+    <input id="password" type="password" placeholder="Password">
 
-<main class="wrap">
-  <section class="card">
+    <button onclick="doLogin()">Login</button>
 
-    <label class="label">ID</label>
-    <input id="userid" class="input" type="text">
-
-    <label class="label">Password</label>
-    <input id="password" class="input" type="password">
-
-    <button class="btn" onclick="login()">Login</button>
-
-    <div id="msg" class="msg"></div>
-
-  </section>
-</main>
+    <div id="msg"></div>
+  </div>
 
 <script>
-const API = "https://script.google.com/macros/s/AKfycbwcFFZH97OAI8L4ZaajWqRnps4T1kw7Tm6Enbi4-YYJ-VJsl8ZwcGvWHjELzOUmvvqd/exec";
+function doLogin(){
+  let u = username.value.trim();
+  let p = password.value.trim();
 
-// لو فيه سيشن جاهزة
-if(localStorage.getItem("ID")) location.href = "attendance.html";
-
-async function login(){
-  const id = document.getElementById("userid").value.trim();
-  const pass = document.getElementById("password").value.trim();
-  const msg = document.getElementById("msg");
-
-  if(!id || !pass){
-    msg.style.color="red";
-    msg.textContent="Please fill all fields";
-    return;
-  }
-
-  msg.style.color="#444";
-  msg.textContent="Checking...";
-
-  try{
-    const res = await fetch(API,{
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({
-        action:"login",
-        ID:id,
-        password:pass
-      })
-    });
-
-    const data = await res.json();
-
-    if(data.status === "success"){
-      msg.style.color="green";
-      msg.textContent="Success ✔";
-
-      localStorage.setItem("ID", data.ID);
-      localStorage.setItem("name", data.name);
-
-      setTimeout(()=> location.href="attendance.html", 300);
+  fetch("https://script.google.com/macros/s/AKfycbyxtFo_uIm5dIh2a73LQZrxBb2pLFvuI2Bz8e6vJ3H5bLvDsP2H6d4Q39liCEbD6uA9/exec", {
+    method:"POST",
+    body: JSON.stringify({
+      action:"login",
+      username:u,
+      password:p
+    })
+  })
+  .then(r=>r.json())
+  .then(d=>{
+    if(d.status==="success"){
+      window.location.href="https://script.google.com/macros/s/AKfycbyxtFo_uIm5dIh2a73LQZrxBb2pLFvuI2Bz8e6vJ3H5bLvDsP2H6d4Q39liCEbD6uA9/exec?page=logs";
     } else {
-      msg.style.color="red";
-      msg.textContent="Invalid ID or Password";
+      msg.textContent = d.message;
     }
-
-  }catch(e){
-    msg.style.color="red";
-    msg.textContent="Connection Error";
-  }
+  });
 }
 </script>
 
