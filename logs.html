@@ -1,141 +1,81 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html>
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Attendance Logs</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
-
-<style>
-body{
-  margin:0;
-  background:#f5f2fc;
-  font-family:'Cairo',sans-serif;
-}
-
-.header{
-  background:linear-gradient(135deg,#A666B0,#573B92);
-  padding:22px;
-  text-align:center;
-  color:#fff;
-  font-size:20px;
-  font-weight:700;
-}
-
-.container{
-  max-width:600px;
-  margin:20px auto;
-  background:#fff;
-  padding:20px;
-  border-radius:18px;
-  box-shadow:0 4px 18px rgba(0,0,0,0.1);
-}
-
-.label{
-  font-size:14px;
-  margin-top:14px;
-}
-.input, select{
-  width:100%;
-  padding:14px;
-  margin-top:6px;
-  border-radius:12px;
-  border:1px solid #ccc;
-}
-
-.btn{
-  width:100%;
-  margin-top:22px;
-  padding:14px;
-  font-size:16px;
-  color:#fff;
-  border:none;
-  border-radius:14px;
-  background:linear-gradient(135deg,#A666B0,#573B92);
-  cursor:pointer;
-}
-
-#msg{
-  text-align:center;
-  margin-top:12px;
-  font-weight:600;
-}
-</style>
+  <base target="_top">
+  <style>
+    body{
+      margin:0;
+      background:#f5f6fa;
+      padding:30px;
+      font-family:'Cairo',sans-serif;
+    }
+    .box{
+      max-width:1000px;
+      margin:auto;
+      background:white;
+      padding:25px;
+      border-radius:14px;
+      box-shadow:0 4px 20px rgba(0,0,0,0.08);
+    }
+    h2{
+      text-align:center;
+      margin-top:0;
+      margin-bottom:25px;
+      font-weight:600;
+    }
+    table{
+      width:100%;
+      border-collapse:collapse;
+    }
+    th{
+      background:#007bff;
+      color:white;
+      padding:12px;
+      font-size:15px;
+    }
+    td{
+      padding:12px;
+      border-bottom:1px solid #eee;
+      font-size:14px;
+    }
+    tr:hover td{
+      background:#eef5ff;
+    }
+  </style>
 </head>
 
 <body>
+  <div class="box">
+    <h2>System Logs</h2>
 
-<div class="header">Attendance Log — Submit Request</div>
-
-<div class="container">
-
-  <label class="label">Date</label>
-  <input id="date" type="date" class="input">
-
-  <label class="label">Request Type</label>
-  <select id="req" class="input">
-    <option value="">Select</option>
-    <option value="Permission">Permission</option>
-    <option value="Work From Home">Work From Home</option>
-    <option value="Late Arrival">Late Arrival</option>
-  </select>
-
-  <button class="btn" onclick="save()">Submit</button>
-
-  <div id="msg"></div>
-
-</div>
+    <table id="logs">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>User</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
 
 <script>
-const API = "https://script.google.com/macros/s/AKfycbzD39Cib33vdLWyOdO39Hb92_E4CKwLK9UcCLqTY88k_ucDdR9pVwC87B0BVk-Vjif_/exec";
+fetch("https://script.google.com/macros/s/AKfycbyxtFo_uIm5dIh2a73LQZrxBb2pLFvuI2Bz8e6vJ3H5bLvDsP2H6d4Q39liCEbD6uA9/exec?page=apiLogs")
+  .then(r => r.json())
+  .then(rows => {
+    let tbody = document.querySelector("#logs tbody");
 
-if(!localStorage.getItem("ID")){
-  location.href = "index.html";
-}
-
-async function save(){
-  const date = document.getElementById("date").value;
-  const req = document.getElementById("req").value;
-  const msg = document.getElementById("msg");
-
-  if(!date || !req){
-    msg.style.color="red";
-    msg.textContent="Please fill all fields";
-    return;
-  }
-
-  msg.style.color="black";
-  msg.textContent="Saving...";
-
-  try{
-    const r = await fetch(API, {
-      method:"POST",
-      headers: {"Content-Type":"application/json"},
-      body: JSON.stringify({
-        action:"request",
-        name: localStorage.getItem("name"),
-        date: date,
-        request_type: req,
-        added_by: localStorage.getItem("ID")
-      })
+    rows.slice(1).forEach(r=>{
+      tbody.innerHTML += `
+        <tr>
+          <td>${r[0]}</td>
+          <td>${r[1]}</td>
+          <td>${r[2]}</td>
+        </tr>
+      `;
     });
-
-    const j = await r.json();
-
-    if(j.status === "saved"){
-      msg.style.color="green";
-      msg.textContent="Saved ✔";
-    } else {
-      msg.style.color="red";
-      msg.textContent="Error!";
-    }
-
-  } catch(err){
-    msg.style.color="red";
-    msg.textContent="Connection Error";
-  }
-}
+  });
 </script>
 
 </body>
