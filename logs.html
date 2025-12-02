@@ -3,233 +3,137 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Enterprise Large and Mega Projects — Requests</title>
+<title>Attendance Logs</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
 
 <style>
-:root{
-  --we-purple:#6f2f90;
-  --muted:#6b6b6b;
-  --bg:#f4f1fb;
-  --card:#fff;
-
-  --btn-start:#A666B0;
-  --btn-end:#573B92;
-}
-
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-html,body{
+body{
   margin:0;
-  background:var(--bg);
+  background:#f5f2fc;
   font-family:'Cairo',sans-serif;
-  color:#111;
 }
 
-/* HEADER */
-.header-box{
-  width:100%;
-  max-width:420px;
-  margin:26px auto 0 auto;
-  background:linear-gradient(135deg, var(--btn-start), var(--btn-end));
-  padding:26px 16px 30px 16px;
-  border-radius:20px;
+.header{
+  background:linear-gradient(135deg,#A666B0,#573B92);
+  padding:22px;
   text-align:center;
   color:#fff;
-  box-shadow:0 6px 20px rgba(111,47,144,0.22);
-}
-.header-title{
-  font-size:22px;
+  font-size:20px;
   font-weight:700;
 }
-.header-sub{
-  margin-top:6px;
-  font-size:15px;
-  opacity:0.92;
-}
 
-/* CARD */
 .container{
-  padding:22px;
-  display:flex;
-  justify-content:center;
-}
-.card{
-  width:100%;
-  max-width:420px;
-  background:var(--card);
-  border-radius:20px;
-  padding:26px;
-  box-shadow:0 8px 28px rgba(0,0,0,0.08);
-  margin-top:20px;
+  max-width:600px;
+  margin:20px auto;
+  background:#fff;
+  padding:20px;
+  border-radius:18px;
+  box-shadow:0 4px 18px rgba(0,0,0,0.1);
 }
 
-/* LABEL */
-.label-title{
-  font-size:16px;
-  font-weight:700;
-  margin-bottom:10px;
-  margin-top:16px;
-  color:#555;
+.label{
+  font-size:14px;
+  margin-top:14px;
 }
-
-/* INPUTS */
-.select, .input-date{
+.input, select{
   width:100%;
-  padding:14px 16px;
+  padding:14px;
+  margin-top:6px;
   border-radius:12px;
-  border:1px solid #e0e0e0;
-  font-size:16px;
-  margin-bottom:4px;
+  border:1px solid #ccc;
 }
 
-/* BUTTON */
-.btn-full{
+.btn{
   width:100%;
-  padding:16px;
-  font-size:17px;
+  margin-top:22px;
+  padding:14px;
+  font-size:16px;
+  color:#fff;
   border:none;
   border-radius:14px;
-  color:#fff;
+  background:linear-gradient(135deg,#A666B0,#573B92);
   cursor:pointer;
-
-  background:linear-gradient(135deg, var(--btn-start), var(--btn-end));
-
-  box-shadow:
-    0 6px 14px rgba(111,47,144,0.30),
-    0 3px 6px rgba(0,0,0,0.18),
-    inset 0 2px 4px rgba(255,255,255,0.22);
-
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  margin-top:20px;
 }
-.btn-full:active{ transform:scale(0.96); }
 
-/* MESSAGE */
-.msg{
-  height:22px;
-  margin-top:14px;
+#msg{
   text-align:center;
-  font-weight:700;
-  font-size:14px;
+  margin-top:12px;
+  font-weight:600;
 }
 </style>
 </head>
 
 <body>
 
-<!-- HEADER -->
-<div class="header-box">
-  <div class="header-title">Enterprise Large and Mega Projects</div>
-  <div class="header-sub">Request Submission</div>
+<div class="header">Attendance Log — Submit Request</div>
+
+<div class="container">
+
+  <label class="label">Date</label>
+  <input id="date" type="date" class="input">
+
+  <label class="label">Request Type</label>
+  <select id="req" class="input">
+    <option value="">Select</option>
+    <option value="Permission">Permission</option>
+    <option value="Work From Home">Work From Home</option>
+    <option value="Late Arrival">Late Arrival</option>
+  </select>
+
+  <button class="btn" onclick="save()">Submit</button>
+
+  <div id="msg"></div>
+
 </div>
 
-<!-- CONTENT -->
-<main class="container">
-  <section class="card">
-
-    <!-- NAME -->
-    <label class="label-title" for="name">Name</label>
-    <select id="name" class="select">
-      <option value="" disabled selected>Select Name</option>
-      <option>Ismail Mostafa Ismail</option>
-      <option>Amr Ahmed</option>
-      <option>Mohamed Adel</option>
-      <option>Ahmed Gamal</option>
-      <option>Ahmed Elqanawaty</option>
-      <option>Hossam Elsayed</option>
-      <option>Mohamed Medhat</option>
-      <option>Mohamed Nasser</option>
-      <option>Mahmoud Saeed</option>
-      <option>Amr Gad</option>
-      <option>Ayman Yahia</option>
-      <option>Hisham Abd el Moghny</option>
-      <option>Samy Saad</option>
-      <option>Khaled Hassan</option>
-      <option>Ahmed Hafez</option>
-      <option>Ziad Ayman</option>
-      <option>Mohamed Baioumy</option>
-    </select>
-
-    <!-- CALENDAR -->
-    <label class="label-title" for="date">Calendar</label>
-    <input type="date" id="date" class="input-date"/>
-
-    <!-- REQUEST TYPE -->
-    <label class="label-title" for="type">Request Type</label>
-    <select id="type" class="select">
-      <option value="" disabled selected>Select Request Type</option>
-      <option>Change Work Location</option>
-      <option>Annual leave</option>
-      <option>Permission 30 minute</option>
-      <option>Permission 1 Hour</option>
-      <option>Permission 2 Hours</option>
-      <option>Permission 3 Hours</option>
-      <option>Permission 4 Hours</option>
-      <option>Sick Leave</option>
-      <option>Emergency leave</option>
-    </select>
-
-    <!-- SUBMIT -->
-    <button class="btn-full" onclick="submitRequest()">Submit</button>
-
-    <!-- MESSAGE -->
-    <div id="msg" class="msg"></div>
-
-  </section>
-</main>
-
 <script>
-/* ===== API + LOGIN DATA ===== */
-const API =
-"https://script.google.com/macros/s/AKfycby9an-2PsTP-PKRrPJvKa3MeERzFt6EW-mMpmH_RgZxVlZUNsNL3pEM0Dogwgxmbo2k/exec";
+const API = "PUT_YOUR_NEW_WEB_APP_URL_HERE";
 
-const addedBy = localStorage.getItem("ID") || "unknown";
+if(!localStorage.getItem("ID")){
+  location.href = "index.html";
+}
 
-/* ===== SUBMIT FUNCTION ===== */
-async function submitRequest() {
-  const name = document.getElementById("name").value;
+async function save(){
   const date = document.getElementById("date").value;
-  const type = document.getElementById("type").value;
+  const req = document.getElementById("req").value;
   const msg = document.getElementById("msg");
 
-  if (!name || !date || !type) {
-    msg.style.color = "red";
-    msg.textContent = "Please complete all fields!";
+  if(!date || !req){
+    msg.style.color="red";
+    msg.textContent="Please fill all fields";
     return;
   }
 
-  msg.style.color = "#666";
-  msg.textContent = "Submitting...";
+  msg.style.color="black";
+  msg.textContent="Saving...";
 
-  const payload = {
-    action: "request",
-    name: name,
-    date: date,
-    request_type: type,
-    added_by: addedBy
-  };
-
-  try {
-    await fetch(API, {
-      method: "POST",
-      mode: "no-cors",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
+  try{
+    const r = await fetch(API, {
+      method:"POST",
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify({
+        action:"request",
+        name: localStorage.getItem("name"),
+        date: date,
+        request_type: req,
+        added_by: localStorage.getItem("ID")
+      })
     });
 
-    msg.style.color = "green";
-    msg.textContent = "Request submitted ✔";
+    const j = await r.json();
 
-    document.getElementById("name").selectedIndex = 0;
-    document.getElementById("date").value = "";
-    document.getElementById("type").selectedIndex = 0;
+    if(j.status === "saved"){
+      msg.style.color="green";
+      msg.textContent="Saved ✔";
+    } else {
+      msg.style.color="red";
+      msg.textContent="Error!";
+    }
 
-  } catch (e) {
-    msg.style.color = "red";
-    msg.textContent = "Connection Error";
+  } catch(err){
+    msg.style.color="red";
+    msg.textContent="Connection Error";
   }
 }
 </script>
