@@ -162,7 +162,7 @@ html,body{
 </main>
 
 <script>
-const API = "https://script.google.com/macros/s/AKfycby9an-2PsTP-PKRrPJvKa3MeERzFt6EW-mMpmH_RgZxVlZUNsNL3pEM0Dogwgxmbo2k/exec";
+const API = "PUT_YOUR_NEW_WEB_APP_URL_HERE";
 
 if(localStorage.getItem('ID')){
   location.href = "logs.html";
@@ -204,7 +204,7 @@ async function login(){
 
       setTimeout(() => {
         location.href = "logs.html";
-      }, 2000);  // ← Auto redirect after 2 seconds
+      }, 600);
 
     } else {
       msg.style.color="red";
