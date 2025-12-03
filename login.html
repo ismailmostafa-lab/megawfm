@@ -162,12 +162,20 @@ html,body{
 </main>
 
 <script>
-const API = "https://script.google.com/macros/s/AKfycbyxtFo_uIm5dIh2a73LQZrxBb2pLFvuI2Bz8e6vJ3H5bLvDsP2H6d4Q39liCEbD6uA9/exec";
+const API = "";   // لسه هنضيفه
 
-if(localStorage.getItem('ID')){
-  location.href = "logs.html";
-}
+// ---------------------------
+// 1) دعم الضغط على Enter
+// ---------------------------
+document.addEventListener("keydown", (e)=>{
+  if(e.key === "Enter"){
+    login();
+  }
+});
 
+// --------------------------------
+// 2) تحسين Connection Error + retry
+// --------------------------------
 async function login(){
   const id = document.getElementById("userid").value.trim();
   const pass = document.getElementById("password").value.trim();
@@ -183,15 +191,30 @@ async function login(){
   msg.textContent="Checking...";
 
   try{
-    const r = await fetch(API, {
-      method:"POST",
-      headers: {"Content-Type": "application/json"},
-      body: JSON.stringify({
-        action:"login",
-        ID:id,
-        password:pass
-      })
-    });
+    let r;
+
+    try{
+      r = await fetch(API, {
+        method:"POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+          action:"login",
+          ID:id,
+          password:pass
+        })
+      });
+    } catch(err){
+      // محاولة إعادة واحدة
+      r = await fetch(API, {
+        method:"POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+          action:"login",
+          ID:id,
+          password:pass
+        })
+      });
+    }
 
     const j = await r.json();
 
@@ -213,7 +236,7 @@ async function login(){
 
   } catch(err){
     msg.style.color="red";
-    msg.textContent="Connection Error";
+    msg.textContent="Connection Error — Try again";
   }
 }
 </script>
