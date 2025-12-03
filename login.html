@@ -76,7 +76,7 @@ html,body{
   margin-top:14px;
 }
 
-.input, .select-box{
+.input{
   width:100%;
   padding:14px 16px;
   border-radius:12px;
@@ -84,13 +84,10 @@ html,body{
   font-size:16px;
   margin-top:6px;
   transition:0.25s;
-  font-family:inherit; 
-  -webkit-appearance: none; 
-  -moz-appearance: none;
-  appearance: none;
+  font-family:inherit;
 }
 
-.input:focus, .select-box:focus{
+.input:focus{
   outline:none;
   border-color:var(--accent);
   box-shadow:0 0 0 3px rgba(0,163,224,0.35);
@@ -136,74 +133,26 @@ html,body{
   margin-top:14px;
   text-align:center;
 }
-
-.hidden {
-    display: none !important;
-}
-
-.link-btn {
-    display: inline-block;
-    width: auto;
-    margin-top: 15px;
-    padding: 8px 15px;
-    font-size: 14px;
-    background: #eef5ff;
-    color: var(--accent);
-    border-radius: 8px;
-    text-decoration: none;
-    font-weight: 600;
-}
 </style>
 </head>
 
 <body>
 
 <div class="header-box">
-  <div class="header-title" id="headerTitle">Enterprise Large and Mega Projects</div>
-  <div class="header-sub" id="headerSub">Request Submission</div>
+  <div class="header-title">Enterprise Large and Mega Projects</div>
+  <div class="header-sub">Request Submission</div>
 </div>
 
 <main class="wrap">
   <section class="card">
 
-    <!-- 1. Login Section (Default View) -->
-    <div id="loginSection">
-      <!-- Removed the H3 "User Login" here -->
-      <label class="label" for="userid">ID</label>
-      <input id="userid" class="input" type="text" autocomplete="username" inputmode="numeric">
+    <label class="label" for="userid">ID</label>
+    <input id="userid" class="input" type="text" autocomplete="username" inputmode="numeric">
 
-      <label class="label" for="password">Password</label>
-      <input id="password" class="input" type="password" autocomplete="current-password">
+    <label class="label" for="password">Password</label>
+    <input id="password" class="input" type="password" autocomplete="current-password">
 
-      <button class="btn" onclick="login()">Login</button>
-    </div>
-    
-    <!-- 2. Submission Section (Hidden by Default) -->
-    <div id="submissionSection" class="hidden">
-        <!-- Removed the H3 "Submit New Request" here -->
-        <p style="color: var(--muted); font-size: 14px; margin-bottom: 20px;">
-            Welcome, <strong id="loggedInUser" style="color:#573B92;"></strong>!
-        </p>
-        
-        <label class="label" for="entryName">Name</label>
-        <input id="entryName" class="input" type="text" placeholder="Enter name">
-
-        <label class="label" for="entryDate">Date</label>
-        <input id="entryDate" class="input" type="date">
-
-        <label class="label" for="requestType">Request Type</label>
-        <select id="requestType" class="select-box">
-            <option value="">-- Select Request Type --</option>
-            <option value="New Project">New Project</option>
-            <option value="Update Project">Update Project</option>
-            <option value="Cancel Project">Cancel Project</option>
-        </select>
-
-        <button class="btn" onclick="submitLog()">Submit Request</button>
-        
-        <a href="logs.html" class="link-btn">View Log History</a>
-        <a href="#" class="link-btn" style="float: right;" onclick="logout()">Logout</a>
-    </div>
+    <button class="btn" onclick="login()">Login</button>
 
     <div id="msg" class="msg"></div>
 
@@ -215,16 +164,7 @@ html,body{
 </main>
 
 <script>
-// IMPORTANT: Replace this with your deployed Web App URL
-const API = "https://script.google.com/macros/s/AKfycbze8qFTLp6S4IJJchWYbFV9U0I5RA_MBlY67zz3OocFYzE0Z6HfPysC5QtVmH96RGFw/exec"; 
-
-// Check for existing session on page load
-window.onload = function() {
-    const userName = localStorage.getItem('name');
-    if (userName) {
-        showSubmissionForm(userName);
-    }
-}
+const API = "https://script.google.com/macros/s/AKfycbze8qFTLp6S4IJJchWYbFV9U0I5RA_MBlY67zz3OocFYzE0Z6HfPysC5QtVmH96RGFw/exec";
 
 async function login(){
   const id = document.getElementById('userid').value.trim();
@@ -254,10 +194,9 @@ async function login(){
       msg.textContent='Login Successful.';
       localStorage.setItem('ID', j.ID);
       localStorage.setItem('name', j.name);
-      
-      // Show submission form instead of redirecting
-      showSubmissionForm(j.name);
-      
+
+      // REDIRECT TO LOGS PAGE
+      window.location.href = "logs.html";
     }
     else{
       msg.style.color='red';
@@ -270,78 +209,10 @@ async function login(){
   }
 }
 
-function showSubmissionForm(userName) {
-    document.getElementById('loginSection').classList.add('hidden');
-    document.getElementById('submissionSection').classList.remove('hidden');
-    document.getElementById('loggedInUser').textContent = userName;
-    document.getElementById('headerSub').textContent = 'Submit New Request';
-    document.getElementById('msg').textContent = ''; // Clear login message
-}
-
-async function submitLog() {
-    const name = document.getElementById('entryName').value.trim();
-    const date = document.getElementById('entryDate').value.trim();
-    const type = document.getElementById('requestType').value.trim();
-    const msg = document.getElementById('msg');
-    
-    // User who made the request (from localStorage)
-    const addedBy = localStorage.getItem('name'); 
-
-    if(!name || !date || !type) {
-        msg.style.color='red';
-        msg.textContent='Please fill in Name, Date, and Request Type.';
-        return;
-    }
-    
-    msg.style.color='#666';
-    msg.textContent='Submitting request...';
-
-    try {
-        const r = await fetch(API, {
-            method: 'POST',
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({
-                action: 'addLog',
-                name: name,
-                date: date,
-                request_type: type,
-                added_by: addedBy 
-            })
-        });
-
-        const j = await r.json();
-
-        if (j.status === 'success') {
-            msg.style.color='green';
-            msg.textContent='Request submitted successfully!';
-            // Clear fields after successful submission
-            document.getElementById('entryName').value = '';
-            document.getElementById('entryDate').value = '';
-            document.getElementById('requestType').value = '';
-        } else {
-            msg.style.color='red';
-            msg.textContent='Submission Failed: ' + j.message;
-        }
-
-    } catch(e) {
-        msg.style.color='red';
-        msg.textContent='Connection Error during submission.';
-        console.error(e);
-    }
-}
-
-function logout() {
-    localStorage.removeItem('ID');
-    localStorage.removeItem('name');
-    location.reload(); // Reloads to the login screen
-}
-
-// Allow pressing Enter key to submit login (only if submission form is hidden)
 document.addEventListener("keydown", (e)=>{ 
-    if(e.key === "Enter" && document.getElementById('submissionSection').classList.contains('hidden')) {
-        login(); 
-    }
+    if(e.key === "Enter") login(); 
 });
 </script>
+
 </body>
 </html>
