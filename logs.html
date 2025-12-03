@@ -1,10 +1,9 @@
-
 <!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Enterprise Large and Mega Projects — Requests</title>
+<title>Enterprise Large and Mega Projects — Requests Log</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
 
@@ -75,13 +74,14 @@ html,body{
 }
 
 /* INPUTS */
-.select, .input-date{
+.input, .input-date, .select{
   width:100%;
   padding:14px 16px;
   border-radius:12px;
   border:1px solid #e0e0e0;
   font-size:16px;
   margin-bottom:4px;
+  background:#fff;
 }
 
 /* BUTTON */
@@ -110,7 +110,7 @@ html,body{
 
 /* MESSAGE */
 .msg{
-  height:22px;
+  min-height:30px;
   margin-top:14px;
   text-align:center;
   font-weight:700;
@@ -124,35 +124,16 @@ html,body{
 <!-- HEADER -->
 <div class="header-box">
   <div class="header-title">Enterprise Large and Mega Projects</div>
-  <div class="header-sub">Request Submission</div>
+  <div class="header-sub">Submit Request</div>
 </div>
 
 <!-- CONTENT -->
 <main class="container">
   <section class="card">
 
-    <!-- NAME -->
-    <label class="label-title" for="name">Name</label>
-    <select id="name" class="select">
-      <option value="" disabled selected>Select Name</option>
-      <option>Ismail Mostafa Ismail</option>
-      <option>Amr Ahmed</option>
-      <option>Mohamed Adel</option>
-      <option>Ahmed Gamal</option>
-      <option>Ahmed Elqanawaty</option>
-      <option>Hossam Elsayed</option>
-      <option>Mohamed Medhat</option>
-      <option>Mohamed Nasser</option>
-      <option>Mahmoud Saeed</option>
-      <option>Amr Gad</option>
-      <option>Ayman Yahia</option>
-      <option>Hisham Abd el Moghny</option>
-      <option>Samy Saad</option>
-      <option>Khaled Hassan</option>
-      <option>Ahmed Hafez</option>
-      <option>Ziad Ayman</option>
-      <option>Mohamed Baioumy</option>
-    </select>
+    <!-- USER NAME (STATIC) -->
+    <label class="label-title">Name</label>
+    <input id="name" class="input" type="text" disabled>
 
     <!-- CALENDAR -->
     <label class="label-title" for="date">Calendar</label>
@@ -183,11 +164,19 @@ html,body{
 </main>
 
 <script>
-/* ===== API + LOGIN DATA ===== */
+/* ===== FRONT-END LOGIN CHECK ===== */
+if(!localStorage.getItem("ID")) {
+    window.location.href = "login.html";
+}
+
+/* ===== LOAD USER NAME ===== */
+document.getElementById("name").value = localStorage.getItem("name") || "";
+
+/* ===== API (Backend later) ===== */
 const API =
 "https://script.google.com/macros/s/AKfycbze8qFTLp6S4IJJchWYbFV9U0I5RA_MBlY67zz3OocFYzE0Z6HfPysC5QtVmH96RGFw/exec";
 
-const addedBy = localStorage.getItem("ID") || "unknown";
+const addedBy = localStorage.getItem("ID");
 
 /* ===== SUBMIT FUNCTION ===== */
 async function submitRequest() {
@@ -196,7 +185,9 @@ async function submitRequest() {
   const type = document.getElementById("type").value;
   const msg = document.getElementById("msg");
 
-  if (!name || !date || !type) {
+  msg.innerHTML = ""; // Clear previous messages
+
+  if (!date || !type) {
     msg.style.color = "red";
     msg.textContent = "Please complete all fields!";
     return;
@@ -216,15 +207,32 @@ async function submitRequest() {
   try {
     await fetch(API, {
       method: "POST",
-      mode: "no-cors",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload)
     });
 
+    // Success message
     msg.style.color = "green";
     msg.textContent = "Request submitted ✔";
 
-    document.getElementById("name").selectedIndex = 0;
+    // Oracle warning
+    setTimeout(() => {
+      const oracleMsg = document.createElement("div");
+      oracleMsg.style.color = "red";
+      oracleMsg.style.marginTop = "6px";
+      oracleMsg.style.fontWeight = "700";
+      oracleMsg.textContent = "Please don't forget adding to Oracle";
+      msg.appendChild(oracleMsg);
+    }, 300);
+
+    // Auto logout after 2 seconds
+    setTimeout(() => {
+        localStorage.removeItem("ID");
+        localStorage.removeItem("name");
+        window.location.href = "login.html";
+    }, 2000);
+
+    // Reset fields
     document.getElementById("date").value = "";
     document.getElementById("type").selectedIndex = 0;
 
