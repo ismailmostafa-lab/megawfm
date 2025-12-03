@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Enterprise Large and Mega Projects — Login</title>
+<title>Enterprise Large and Mega Projects — Attendance Log</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
 
@@ -14,7 +14,6 @@
   --bg:#f4f1fb;
   --card:#fff;
   --accent:#00a3e0;
-
   --btn-start:#A666B0; 
   --btn-end:#573B92;
 }
@@ -32,7 +31,6 @@ html,body{
   to{opacity:1; transform:none;}
 }
 
-/* HEADER */
 .header-box{
   width:100%;
   max-width:420px;
@@ -44,23 +42,25 @@ html,body{
   color:#fff;
   box-shadow:0 6px 20px rgba(111,47,144,0.22);
 }
+
 .header-title{
   font-size:22px;
   font-weight:700;
 }
+
 .header-sub{
   margin-top:6px;
   font-size:15px;
   opacity:0.92;
 }
 
-/* CARD */
 .wrap{
   display:flex;
   justify-content:center;
   padding:22px;
   margin-top:20px;
 }
+
 .card{
   width:100%;
   max-width:420px;
@@ -70,12 +70,12 @@ html,body{
   box-shadow:0 8px 28px rgba(0,0,0,0.08);
 }
 
-/* INPUT */
 .label{
   font-size:14px;
   color:var(--muted);
   margin-top:14px;
 }
+
 .input{
   width:100%;
   padding:14px 16px;
@@ -85,13 +85,13 @@ html,body{
   margin-top:6px;
   transition:0.25s;
 }
+
 .input:focus{
   outline:none;
   border-color:var(--accent);
   box-shadow:0 0 0 3px rgba(0,163,224,0.35);
 }
 
-/* BUTTON */
 .btn{
   width:100%;
   margin-top:22px;
@@ -100,19 +100,21 @@ html,body{
   color:#fff;
   border:none;
   border-radius:14px;
-
   background:linear-gradient(135deg, var(--btn-start), var(--btn-end));
-
   box-shadow:
     0 6px 14px rgba(111,47,144,0.30),
     0 3px 6px rgba(0,0,0,0.18),
     inset 0 2px 4px rgba(255,255,255,0.22);
-
   cursor:pointer;
   transition:0.18s ease;
 }
+
 .btn:active{
   transform:scale(0.96);
+  box-shadow:
+    0 3px 8px rgba(111,47,144,0.25),
+    0 2px 4px rgba(0,0,0,0.15),
+    inset 0 1px 3px rgba(255,255,255,0.20);
 }
 
 .msg{
@@ -134,13 +136,11 @@ html,body{
 
 <body>
 
-<!-- HEADER -->
 <div class="header-box">
   <div class="header-title">Enterprise Large and Mega Projects</div>
   <div class="header-sub">Attendance Log</div>
 </div>
 
-<!-- FORM -->
 <main class="wrap">
   <section class="card">
 
@@ -162,83 +162,53 @@ html,body{
 </main>
 
 <script>
-const API = "https://script.google.com/macros/s/AKfycbwcanXAcOPNhfbY5sTo0Io1eMjOfZivC-sgRWGmrJOkJftLhes_4-UfUy0N8q7DllBF/exec";   // لسه هنضيفه
+const API = "https://script.google.com/macros/s/AKfycbxm8sykLoHDhv6b-8AfmnG_EEV1LSNlOKZa9JOE4c1eiC7vKM9adpFLVEEBuNhNf0aq/exec";   // ← حط لينك الـ exec هنا
 
-// ---------------------------
-// 1) دعم الضغط على Enter
-// ---------------------------
-document.addEventListener("keydown", (e)=>{
-  if(e.key === "Enter"){
-    login();
-  }
-});
+if(localStorage.getItem('ID')) 
+  location.href = 'attendance.html';
 
-// --------------------------------
-// 2) تحسين Connection Error + retry
-// --------------------------------
 async function login(){
-  const id = document.getElementById("userid").value.trim();
-  const pass = document.getElementById("password").value.trim();
-  const msg = document.getElementById("msg");
+  const id = document.getElementById('userid').value.trim();
+  const pass = document.getElementById('password').value.trim();
+  const msg = document.getElementById('msg');
 
   if(!id || !pass){
-    msg.style.color="red";
-    msg.textContent="Please fill all fields";
+    msg.style.color='red';
+    msg.textContent='Please fill all fields';
     return;
   }
 
-  msg.style.color="#666";
-  msg.textContent="Checking...";
+  msg.style.color='#666';
+  msg.textContent='Checking...';
 
   try{
-    let r;
-
-    try{
-      r = await fetch(API, {
-        method:"POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({
-          action:"login",
-          ID:id,
-          password:pass
-        })
-      });
-    } catch(err){
-      // محاولة إعادة واحدة
-      r = await fetch(API, {
-        method:"POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({
-          action:"login",
-          ID:id,
-          password:pass
-        })
-      });
-    }
+    const r = await fetch(API,{
+      method:'POST',
+      headers: {"Content-Type":"application/json"},
+      body:JSON.stringify({action:'login', ID:id, password:pass})
+    });
 
     const j = await r.json();
 
-    if(j.status === "success"){
-      msg.style.color="green";
-      msg.textContent="Successfully logged in ✔";
-
-      localStorage.setItem("ID", j.ID);
-      localStorage.setItem("name", j.name);
-
-      setTimeout(() => {
-        location.href = "logs.html";
-      }, 600);
-
-    } else {
-      msg.style.color="red";
-      msg.textContent="Invalid ID or Password";
+    if(j.status === 'success'){
+      msg.style.color='green';
+      msg.textContent='OK';
+      localStorage.setItem('ID', j.ID);
+      localStorage.setItem('name', j.name);
+      setTimeout(()=> location.href='attendance.html', 250);
+    }
+    else{
+      msg.style.color='red';
+      msg.textContent='Invalid ID or Password';
     }
 
-  } catch(err){
-    msg.style.color="red";
-    msg.textContent="Connection Error — Try again";
+  }catch(e){
+    msg.style.color='red';
+    msg.textContent='Connection Error';
   }
 }
+
+document.addEventListener("keydown", (e)=>{ if(e.key === "Enter") login(); });
 </script>
 
 </body>
