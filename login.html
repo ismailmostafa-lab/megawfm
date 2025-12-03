@@ -113,10 +113,6 @@ html,body{
 
 .btn:active{
   transform:scale(0.96);
-  box-shadow:
-    0 3px 8px rgba(111,47,144,0.25),
-    0 2px 4px rgba(0,0,0,0.15),
-    inset 0 1px 3px rgba(255,255,255,0.20);
 }
 
 .msg{
@@ -164,7 +160,7 @@ html,body{
 </main>
 
 <script>
-const API = "https://script.google.com/macros/s/AKfycbx0273rQwAheUg4f8O206P4tYTVeSxPNxjFkC0tIokuUTlXF6IFykECchhCL6xxqoRFKA/exec";
+const API = "https://royal-union-8f4f.attendancelargemegaprojects.workers.dev";
 
 async function login(){
   const id = document.getElementById('userid').value.trim();
@@ -195,7 +191,6 @@ async function login(){
       localStorage.setItem('ID', j.ID);
       localStorage.setItem('name', j.name);
 
-      // REDIRECT TO LOGS PAGE
       window.location.href = "logs.html";
     }
     else{
