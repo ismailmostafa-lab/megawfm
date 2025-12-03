@@ -164,7 +164,7 @@ html,body{
 </main>
 
 <script>
-/* ===== FRONT-END LOGIN CHECK ===== */
+/* ===== CHECK LOGIN ===== */
 if(!localStorage.getItem("ID")) {
     window.location.href = "login.html";
 }
@@ -172,20 +172,18 @@ if(!localStorage.getItem("ID")) {
 /* ===== LOAD USER NAME ===== */
 document.getElementById("name").value = localStorage.getItem("name") || "";
 
-/* ===== API (Backend later) ===== */
-const API =
-"https://script.google.com/macros/s/AKfycbx0273rQwAheUg4f8O206P4tYTVeSxPNxjFkC0tIokuUTlXF6IFykECchhCL6xxqoRFKA/exec;
-
+/* ===== API ENDPOINT ===== */
+const API = "https://royal-union-8f4f.attendancelargemegaprojects.workers.dev";
 const addedBy = localStorage.getItem("ID");
 
-/* ===== SUBMIT FUNCTION ===== */
+/* ===== SUBMIT REQUEST ===== */
 async function submitRequest() {
   const name = document.getElementById("name").value;
   const date = document.getElementById("date").value;
   const type = document.getElementById("type").value;
   const msg = document.getElementById("msg");
 
-  msg.innerHTML = ""; // Clear previous messages
+  msg.innerHTML = "";
 
   if (!date || !type) {
     msg.style.color = "red";
@@ -211,11 +209,9 @@ async function submitRequest() {
       body: JSON.stringify(payload)
     });
 
-    // Success message
     msg.style.color = "green";
     msg.textContent = "Request submitted ✔";
 
-    // Oracle warning
     setTimeout(() => {
       const oracleMsg = document.createElement("div");
       oracleMsg.style.color = "red";
@@ -225,14 +221,12 @@ async function submitRequest() {
       msg.appendChild(oracleMsg);
     }, 300);
 
-    // Auto logout after 2 seconds
     setTimeout(() => {
         localStorage.removeItem("ID");
         localStorage.removeItem("name");
         window.location.href = "login.html";
     }, 2000);
 
-    // Reset fields
     document.getElementById("date").value = "";
     document.getElementById("type").selectedIndex = 0;
 
