@@ -161,7 +161,7 @@ if(!localStorage.getItem("ID")){
   window.location.href = "login.html";
 }
 
-/* LOAD NAME BY LOOKUP */
+/* LOAD NAME */
 (async function loadName(){
   const id  = localStorage.getItem("ID");
   const API = "https://script.google.com/macros/s/AKfycbwCHjHcNiAFJ68F_GX2XrAsKFe0YkTZgF0AYokY7W3gDq99inb8QF14jAO4IlZiRWR3ng/exec";
@@ -218,9 +218,17 @@ async function submitRequest(){
       return;
     }
 
-    // loop through date range
     let s = new Date(from);
     let e = new Date(to);
+
+    /* ----------------------------
+       NEW VALIDATION HERE
+       ---------------------------- */
+    if(s > e){
+      msg.style.color = "red";
+      msg.textContent = "Please add a valid dates";
+      return;
+    }
 
     while(s <= e){
       const d = s.toISOString().split("T")[0];
