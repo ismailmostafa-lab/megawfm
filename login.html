@@ -185,10 +185,8 @@ async function login(){
       msg.style.color="green";
       msg.textContent="Login successful ✔️";
 
-      // Save user ID for next page
       localStorage.setItem("ID", id);
 
-      // redirect to logs page
       setTimeout(()=>{ window.location.href = "logs.html"; }, 400);
 
     } else {
