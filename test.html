@@ -47,9 +47,6 @@
     cursor:pointer;
     margin-top:10px;
   }
-  button:hover{
-    opacity:0.9;
-  }
   #msg{
     margin-top:15px;
     font-size:16px;
@@ -60,25 +57,32 @@
 </head>
 <body>
 
+<!-- IMPORTANT: NO FORM TAG -->
 <div class="box">
   <h3>Login</h3>
 
-  <input type="number" id="id" placeholder="Enter ID">
-  <input type="password" id="pass" placeholder="Enter Password">
+  <input type="number" id="id" placeholder="Enter ID" autocomplete="off">
+  <input type="password" id="pass" placeholder="Enter Password" autocomplete="off">
 
-  <button onclick="doLogin()">Login</button>
+  <!-- FORCE BUTTON MODE -->
+  <button type="button" onclick="doLogin()">Login</button>
 
   <p id="msg"></p>
 </div>
 
 <script>
   function doLogin(){
+
+    // لازم نمنع أي reload غصب
+    event.preventDefault();
+    
     const id = document.getElementById("id").value.trim();
     const pass = document.getElementById("pass").value.trim();
+    const msg = document.getElementById("msg");
 
     if(id === "" || pass === ""){
-      document.getElementById("msg").innerHTML = "Please fill both fields";
-      document.getElementById("msg").style.color = "red";
+      msg.innerHTML = "Please fill both fields";
+      msg.style.color = "red";
       return;
     }
 
@@ -87,24 +91,28 @@
     fetch(`${url}?route=login&id=${id}&pass=${pass}`)
       .then(res => res.text())
       .then(data => {
-        const msg = document.getElementById("msg");
-        
+
+        // protection from auto-redirect
+        history.pushState(null, "", location.href);
+
         if(data === "correct"){
           msg.innerHTML = "Correct ✔️";
           msg.style.color = "green";
-
-          // Redirect (لو عايز صفحة معينة بعد اللوجين)
-          // window.location.href = "dashboard.html";
         } else {
           msg.innerHTML = "Wrong ❌";
           msg.style.color = "red";
         }
       })
-      .catch(err=>{
-        document.getElementById("msg").innerHTML = "Error connecting!";
-        document.getElementById("msg").style.color = "red";
+      .catch(()=>{
+        msg.innerHTML = "Error connecting!";
+        msg.style.color = "red";
       });
   }
+
+  // stop any accidental back navigation → 404 protection
+  window.onpopstate = function () {
+    history.pushState(null, "", location.href);
+  };
 </script>
 
 </body>
