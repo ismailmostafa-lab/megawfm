@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Enterprise Large and Mega Projects — Request Submission</title>
+<title>Enterprise Large and Mega Projects — Login</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
 
@@ -136,17 +136,17 @@ html,body{
 
 <div class="header-box">
   <div class="header-title">Enterprise Large and Mega Projects</div>
-  <div class="header-sub">Request Submission</div>
+  <div class="header-sub">Login</div>
 </div>
 
 <main class="wrap">
   <section class="card">
 
     <label class="label" for="userid">ID</label>
-    <input id="userid" class="input" type="text" autocomplete="username" inputmode="numeric">
+    <input id="userid" class="input" type="text" inputmode="numeric">
 
     <label class="label" for="password">Password</label>
-    <input id="password" class="input" type="password" autocomplete="current-password">
+    <input id="password" class="input" type="password">
 
     <button class="btn" onclick="login()">Login</button>
 
@@ -163,49 +163,47 @@ html,body{
 const API = "https://script.google.com/macros/s/AKfycbwCHjHcNiAFJ68F_GX2XrAsKFe0YkTZgF0AYokY7W3gDq99inb8QF14jAO4IlZiRWR3ng/exec";
 
 async function login(){
-  const id = document.getElementById('userid').value.trim();
-  const pass = document.getElementById('password').value.trim();
-  const msg = document.getElementById('msg');
+  const id = document.getElementById("userid").value.trim();
+  const pass = document.getElementById("password").value.trim();
+  const msg = document.getElementById("msg");
 
   if(!id || !pass){
-    msg.style.color='red';
-    msg.textContent='Please fill all fields.';
+    msg.style.color="red";
+    msg.textContent="Please fill all fields.";
     return;
   }
 
-  msg.style.color='#666';
-  msg.textContent='Checking credentials...';
+  msg.style.color="#666";
+  msg.textContent="Checking...";
 
   try{
-    const r = await fetch(API,{
-      method:'POST',
-      headers: {"Content-Type":"application/json"},
-      body:JSON.stringify({action:'login', ID:id, password:pass})
-    });
+    const url = `${API}?route=login&id=${encodeURIComponent(id)}&pass=${encodeURIComponent(pass)}`;
+    const r = await fetch(url);
+    const t = await r.text();
 
-    const j = await r.json();
+    if(t === "correct"){
+      msg.style.color="green";
+      msg.textContent="Login successful ✔️";
 
-    if(j.status === 'success'){
-      msg.style.color='green';
-      msg.textContent='Login Successful.';
-      localStorage.setItem('ID', j.ID);
-      localStorage.setItem('name', j.name);
+      // Save user ID for next page
+      localStorage.setItem("ID", id);
 
-      window.location.href = "logs.html";
-    }
-    else{
-      msg.style.color='red';
-      msg.textContent='Invalid ID or Password.';
+      // redirect to logs page
+      setTimeout(()=>{ window.location.href = "logs.html"; }, 400);
+
+    } else {
+      msg.style.color="red";
+      msg.textContent="Invalid ID or Password.";
     }
 
   }catch(e){
-    msg.style.color='red';
-    msg.textContent='Connection Error.';
+    msg.style.color="red";
+    msg.textContent="Connection Error.";
   }
 }
 
-document.addEventListener("keydown", (e)=>{ 
-    if(e.key === "Enter") login(); 
+document.addEventListener("keydown", (e)=>{
+  if(e.key === "Enter") login();
 });
 </script>
 
