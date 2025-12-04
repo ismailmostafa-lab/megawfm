@@ -99,6 +99,13 @@ html,body{
   font-weight:700;
   font-size:14px;
 }
+
+.days-box{
+  font-size:16px;
+  font-weight:700;
+  margin-top:10px;
+  color:#333;
+}
 </style>
 </head>
 
@@ -142,10 +149,12 @@ html,body{
     <!-- RANGE DATE -->
     <div id="rangeDiv" style="margin-top:10px; display:none;">
       <label class="label-title">From</label>
-      <input type="date" id="fromDate" class="input-date"/>
+      <input type="date" id="fromDate" class="input-date" oninput="calcDays()"/>
 
       <label class="label-title">To</label>
-      <input type="date" id="toDate" class="input-date"/>
+      <input type="date" id="toDate" class="input-date" oninput="calcDays()"/>
+
+      <div id="daysCount" class="days-box" style="display:none;">Days: 0</div>
     </div>
 
     <button class="btn-full" onclick="submitRequest()">Submit</button>
@@ -183,9 +192,52 @@ function toggleDates(){
   if(type === "Annual leave" || type === "Sick Leave"){
     document.getElementById("singleDateDiv").style.display = "none";
     document.getElementById("rangeDiv").style.display      = "block";
+    document.getElementById("daysCount").style.display     = "none";
   } else {
     document.getElementById("rangeDiv").style.display      = "none";
     document.getElementById("singleDateDiv").style.display = "block";
+  }
+}
+
+/* COUNT WORKING DAYS ONLY */
+function calcDays(){
+  const from = document.getElementById("fromDate").value;
+  const to   = document.getElementById("toDate").value;
+  const box  = document.getElementById("daysCount");
+
+  if(!from || !to){
+    box.style.display = "none";
+    return;
+  }
+
+  let s = new Date(from);
+  let e = new Date(to);
+
+  if(s > e){
+    box.style.display = "block";
+    box.style.color = "red";
+    box.textContent = "Days: 0";
+    return;
+  }
+
+  let working = 0;
+  let d = new Date(s);
+
+  while(d <= e){
+    const day = d.getDay(); // 5=Friday, 6=Saturday
+    if(day !== 5 && day !== 6){
+      working++;
+    }
+    d.setDate(d.getDate()+1);
+  }
+
+  box.style.display = "block";
+  box.textContent = "Days: " + working;
+
+  if(working > 5){
+    box.style.color = "red";
+  } else {
+    box.style.color = "#333";
   }
 }
 
@@ -207,7 +259,7 @@ async function submitRequest(){
   msg.style.color="#666";
   msg.textContent="Submitting...";
 
-  /* MULTI-DAY REQUESTS */
+  /* MULTI-DAY (WORKING DAYS ONLY) */
   if(type === "Annual leave" || type === "Sick Leave"){
     const from = document.getElementById("fromDate").value;
     const to   = document.getElementById("toDate").value;
@@ -221,9 +273,6 @@ async function submitRequest(){
     let s = new Date(from);
     let e = new Date(to);
 
-    /* ----------------------------
-       NEW VALIDATION HERE
-       ---------------------------- */
     if(s > e){
       msg.style.color = "red";
       msg.textContent = "Please add a valid dates";
@@ -231,8 +280,14 @@ async function submitRequest(){
     }
 
     while(s <= e){
-      const d = s.toISOString().split("T")[0];
-      await fetch(`${API}?route=addLog&id=${id}&name=${name}&date=${d}&type=${type}`);
+      const day = s.getDay();
+
+      // Skip Friday (5) & Saturday (6)
+      if(day !== 5 && day !== 6){
+        const d = s.toISOString().split("T")[0];
+        await fetch(`${API}?route=addLog&id=${id}&name=${name}&date=${d}&type=${type}`);
+      }
+
       s.setDate(s.getDate()+1);
     }
 
