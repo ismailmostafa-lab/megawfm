@@ -7,35 +7,53 @@
 
 <style>
   body{
-    font-family: Arial;
+    font-family: Arial, sans-serif;
     display:flex;
     justify-content:center;
     align-items:center;
     height:100vh;
-    background:#f0f0f0;
+    background:#f3f3f3;
+    margin:0;
   }
   .box{
     background:white;
+    width:320px;
     padding:25px;
-    border-radius:10px;
-    box-shadow:0 0 10px rgba(0,0,0,0.1);
-    width:300px;
+    border-radius:12px;
+    box-shadow:0 0 12px rgba(0,0,0,0.12);
+    text-align:center;
+  }
+  h3{
+    margin-bottom:20px;
+    color:#6f2f90;
   }
   input{
     width:100%;
     margin:10px 0;
-    padding:10px;
+    padding:12px;
+    font-size:15px;
     border:1px solid #ccc;
-    border-radius:5px;
+    border-radius:7px;
+    box-sizing:border-box;
   }
   button{
     width:100%;
-    padding:10px;
+    padding:12px;
+    font-size:16px;
     background:#6f2f90;
     color:white;
     border:none;
-    border-radius:5px;
+    border-radius:7px;
     cursor:pointer;
+    margin-top:10px;
+  }
+  button:hover{
+    opacity:0.9;
+  }
+  #msg{
+    margin-top:15px;
+    font-size:16px;
+    font-weight:bold;
   }
 </style>
 
@@ -45,8 +63,8 @@
 <div class="box">
   <h3>Login</h3>
 
-  <input type="number" id="id" placeholder="ID">
-  <input type="password" id="pass" placeholder="Password">
+  <input type="number" id="id" placeholder="Enter ID">
+  <input type="password" id="pass" placeholder="Enter Password">
 
   <button onclick="doLogin()">Login</button>
 
@@ -55,13 +73,36 @@
 
 <script>
   function doLogin(){
-    const id = document.getElementById("id").value;
-    const pass = document.getElementById("pass").value;
+    const id = document.getElementById("id").value.trim();
+    const pass = document.getElementById("pass").value.trim();
 
-    fetch("YOUR_WEB_APP_URL?route=login&id=" + id + "&pass=" + pass)
+    if(id === "" || pass === ""){
+      document.getElementById("msg").innerHTML = "Please fill both fields";
+      document.getElementById("msg").style.color = "red";
+      return;
+    }
+
+    const url = "https://script.google.com/macros/s/AKfycbwCHjHcNiAFJ68F_GX2XrAsKFe0YkTZgF0AYokY7W3gDq99inb8QF14jAO4IlZiRWR3ng/exec";
+
+    fetch(`${url}?route=login&id=${id}&pass=${pass}`)
       .then(res => res.text())
       .then(data => {
-        document.getElementById("msg").innerText = data;
+        const msg = document.getElementById("msg");
+        
+        if(data === "correct"){
+          msg.innerHTML = "Correct ✔️";
+          msg.style.color = "green";
+
+          // Redirect (لو عايز صفحة معينة بعد اللوجين)
+          // window.location.href = "dashboard.html";
+        } else {
+          msg.innerHTML = "Wrong ❌";
+          msg.style.color = "red";
+        }
+      })
+      .catch(err=>{
+        document.getElementById("msg").innerHTML = "Error connecting!";
+        document.getElementById("msg").style.color = "red";
       });
   }
 </script>
