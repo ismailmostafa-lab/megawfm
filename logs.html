@@ -36,15 +36,8 @@ html,body{
   color:#fff;
   box-shadow:0 6px 20px rgba(111,47,144,0.22);
 }
-.header-title{
-  font-size:22px;
-  font-weight:700;
-}
-.header-sub{
-  margin-top:6px;
-  font-size:15px;
-  opacity:0.92;
-}
+.header-title{ font-size:22px; font-weight:700; }
+.header-sub{ margin-top:6px; font-size:15px; opacity:0.92; }
 
 .container{
   padding:22px;
@@ -87,11 +80,16 @@ html,body{
   color:#fff;
   cursor:pointer;
   background:linear-gradient(135deg, var(--btn-start), var(--btn-end));
+  box-shadow:
+    0 6px 14px rgba(111,47,144,0.30),
+    0 3px 6px rgba(0,0,0,0.18),
+    inset 0 2px 4px rgba(255,255,255,0.22);
   display:flex;
   justify-content:center;
   align-items:center;
   margin-top:20px;
 }
+
 .btn-full:active{ transform:scale(0.96); }
 
 .msg{
@@ -122,7 +120,7 @@ html,body{
 
     <!-- REQUEST TYPE -->
     <label class="label-title">Request Type</label>
-    <select id="type" class="select" onchange="toggleDateFields()">
+    <select id="type" class="select" onchange="toggleDates()">
       <option value="" disabled selected>Select Request Type</option>
       <option>Change Work Location</option>
       <option>Annual leave</option>
@@ -135,16 +133,14 @@ html,body{
       <option>Emergency leave</option>
     </select>
 
-    <!-- DATE BOXES NOW AT END -->
-
-    <!-- Single Date -->
-    <div id="singleDateBox" style="margin-top:10px;">
+    <!-- SINGLE DATE -->
+    <div id="singleDateDiv" style="margin-top:10px;">
       <label class="label-title">Date</label>
       <input type="date" id="date" class="input-date"/>
     </div>
 
-    <!-- From / To -->
-    <div id="rangeBox" style="display:none; margin-top:10px;">
+    <!-- RANGE DATE -->
+    <div id="rangeDiv" style="margin-top:10px; display:none;">
       <label class="label-title">From</label>
       <input type="date" id="fromDate" class="input-date"/>
 
@@ -160,41 +156,42 @@ html,body{
 </main>
 
 <script>
-/* LOGIN CHECK */
+/* CHECK LOGIN */
 if(!localStorage.getItem("ID")){
   window.location.href = "login.html";
 }
 
 /* LOAD NAME BY LOOKUP */
-(async function loadName() {
-  const id = localStorage.getItem("ID");
-  const API = "YOUR_API_URL_HERE";
+(async function loadName(){
+  const id  = localStorage.getItem("ID");
+  const API = "https://script.google.com/macros/s/AKfycbwCHjHcNiAFJ68F_GX2XrAsKFe0YkTZgF0AYokY7W3gDq99inb8QF14jAO4IlZiRWR3ng/exec";
 
-  try {
+  try{
     const r = await fetch(`${API}?route=getName&id=${id}`);
-    const data = await r.json();
-    if(data.status === "found"){
-      localStorage.setItem("name", data.name);
-      document.getElementById("name").value = data.name;
+    const j = await r.json();
+    if(j.status === "found"){
+      localStorage.setItem("name", j.name);
+      document.getElementById("name").value = j.name;
     }
-  } catch {}
+  }catch(e){}
 })();
 
 /* SHOW/HIDE DATE INPUTS */
-function toggleDateFields() {
+function toggleDates(){
   const type = document.getElementById("type").value;
+
   if(type === "Annual leave" || type === "Sick Leave"){
-    document.getElementById("singleDateBox").style.display = "none";
-    document.getElementById("rangeBox").style.display = "block";
+    document.getElementById("singleDateDiv").style.display = "none";
+    document.getElementById("rangeDiv").style.display      = "block";
   } else {
-    document.getElementById("rangeBox").style.display = "none";
-    document.getElementById("singleDateBox").style.display = "block";
+    document.getElementById("rangeDiv").style.display      = "none";
+    document.getElementById("singleDateDiv").style.display = "block";
   }
 }
 
-const API = "YOUR_API_URL_HERE";
+const API = "https://script.google.com/macros/s/AKfycbwCHjHcNiAFJ68F_GX2XrAsKFe0YkTZgF0AYokY7W3gDq99inb8QF14jAO4IlZiRWR3ng/exec";
 
-/* SUBMIT */
+/* SUBMIT REQUEST */
 async function submitRequest(){
   const id   = localStorage.getItem("ID");
   const name = localStorage.getItem("name");
@@ -221,18 +218,33 @@ async function submitRequest(){
       return;
     }
 
-    let start = new Date(from);
-    let end   = new Date(to);
+    // loop through date range
+    let s = new Date(from);
+    let e = new Date(to);
 
-    while(start <= end){
-      const d = start.toISOString().split("T")[0];
+    while(s <= e){
+      const d = s.toISOString().split("T")[0];
       await fetch(`${API}?route=addLog&id=${id}&name=${name}&date=${d}&type=${type}`);
-      start.setDate(start.getDate()+1);
+      s.setDate(s.getDate()+1);
     }
 
     msg.style.color="green";
-    msg.textContent="Submitted ✔️";
-    setTimeout(()=> window.location.href="login.html",1500);
+    msg.textContent="Submitted ✔";
+
+    setTimeout(()=>{
+      const extra = document.createElement("div");
+      extra.style.color="red";
+      extra.style.fontWeight="700";
+      extra.style.marginTop="6px";
+      extra.innerHTML="Don't forget adding request to Oracle<br>Please Send an email to Managers";
+      msg.appendChild(extra);
+    },300);
+
+    setTimeout(()=>{
+      localStorage.clear();
+      window.location.href = "login.html";
+    },3000);
+
     return;
   }
 
@@ -247,8 +259,21 @@ async function submitRequest(){
   await fetch(`${API}?route=addLog&id=${id}&name=${name}&date=${date}&type=${type}`);
 
   msg.style.color="green";
-  msg.textContent="Submitted ✔️";
-  setTimeout(()=> window.location.href="login.html",1500);
+  msg.textContent="Submitted ✔";
+
+  setTimeout(()=>{
+    const extra = document.createElement("div");
+    extra.style.color="red";
+    extra.style.fontWeight="700";
+    extra.style.marginTop="6px";
+    extra.innerHTML="Don't forget adding request to Oracle<br>Please Send an email to Managers";
+    msg.appendChild(extra);
+  },300);
+
+  setTimeout(()=>{
+    localStorage.clear();
+    window.location.href="login.html";
+  },3000);
 }
 </script>
 
