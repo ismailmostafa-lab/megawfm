@@ -126,7 +126,7 @@ html,body{
 <main class="container">
   <section class="card">
 
-    <!-- NAME (AUTO FROM LOGIN) -->
+    <!-- NAME (AUTO FROM LOOKUP) -->
     <label class="label-title">Name</label>
     <input id="name" class="input" type="text" disabled>
 
@@ -164,8 +164,25 @@ if(!localStorage.getItem("ID")){
   window.location.href = "login.html";
 }
 
-/* ========== LOAD NAME FROM LOGIN ========== */
-document.getElementById("name").value = localStorage.getItem("name") || "";
+/* ========== LOAD NAME FROM SHEET BY LOOKUP ========== */
+(async function loadName() {
+  const id = localStorage.getItem("ID");
+  const API = "https://script.google.com/macros/s/AKfycbwCHjHcNiAFJ68F_GX2XrAsKFe0YkTZgF0AYokY7W3gDq99inb8QF14jAO4IlZiRWR3ng/exec";
+
+  try {
+    const r = await fetch(`${API}?route=getName&id=${id}`);
+    const data = await r.json();
+
+    if(data.status === "found"){
+      localStorage.setItem("name", data.name);
+      document.getElementById("name").value = data.name;
+    } else {
+      document.getElementById("name").value = "";
+    }
+  } catch (err) {
+    document.getElementById("name").value = "";
+  }
+})();
 
 /* ========== API ENDPOINT ========== */
 const API = "https://script.google.com/macros/s/AKfycbwCHjHcNiAFJ68F_GX2XrAsKFe0YkTZgF0AYokY7W3gDq99inb8QF14jAO4IlZiRWR3ng/exec";
@@ -197,7 +214,6 @@ async function submitRequest(){
       msg.style.color = "green";
       msg.textContent = "Request submitted ✔";
 
-      // clear and logout after success
       setTimeout(()=>{
         localStorage.removeItem("ID");
         localStorage.removeItem("name");
@@ -210,7 +226,6 @@ async function submitRequest(){
     }
 
   } catch(err){
-    console.log(err);
     msg.style.color = "red";
     msg.textContent = "Connection Error";
   }
