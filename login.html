@@ -8,89 +8,34 @@
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
 
 <style>
-:root{
-  --we-purple:#6f2f90;
-  --muted:#6b6b6b;
-  --bg:#f4f1fb;
-  --card:#fff;
-  --accent:#00a3e0;
-  --btn-start:#A666B0; 
-  --btn-end:#573B92;
-}
-
-*{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
-html,body{
+body{
   margin:0;
-  background:var(--bg);
+  background:#f4f1fb;
   font-family:'Cairo',sans-serif;
-  animation:fadeIn 0.4s ease;
-}
-
-@keyframes fadeIn{
-  from{opacity:0; transform:translateY(10px);}
-  to{opacity:1; transform:none;}
-}
-
-.header-box{
-  width:100%;
-  max-width:420px;
-  margin:26px auto 0 auto;
-  background:linear-gradient(135deg, var(--btn-start), var(--btn-end));
-  padding:26px 16px 30px 16px;
-  border-radius:20px;
-  text-align:center;
-  color:#fff;
-  box-shadow:0 6px 20px rgba(111,47,144,0.22);
-}
-
-.header-title{
-  font-size:22px;
-  font-weight:700;
-}
-
-.header-sub{
-  margin-top:6px;
-  font-size:15px;
-  opacity:0.92;
-}
-
-.wrap{
-  display:flex;
-  justify-content:center;
-  padding:22px;
-  margin-top:20px;
 }
 
 .card{
-  width:100%;
   max-width:420px;
-  background:var(--card);
-  border-radius:20px;
-  padding:26px;
-  box-shadow:0 8px 28px rgba(0,0,0,0.08);
+  margin:70px auto;
+  background:white;
+  padding:30px;
+  border-radius:18px;
+  box-shadow:0 8px 25px rgba(0,0,0,0.10);
 }
 
-.label{
-  font-size:14px;
-  color:var(--muted);
-  margin-top:14px;
+h2{
+  text-align:center;
+  color:#6f2f90;
+  margin-bottom:25px;
 }
 
 .input{
   width:100%;
-  padding:14px 16px;
+  padding:14px;
+  margin-top:12px;
   border-radius:12px;
-  border:1px solid #e0e0e0;
   font-size:16px;
-  margin-top:6px;
-  transition:0.25s;
-  font-family:inherit;
-}
-
-.input:focus{
-  outline:none;
-  border-color:var(--accent);
-  box-shadow:0 0 0 3px rgba(0,163,224,0.35);
+  border:1px solid #ccc;
 }
 
 .btn{
@@ -98,113 +43,73 @@ html,body{
   margin-top:22px;
   padding:16px;
   font-size:17px;
-  color:#fff;
   border:none;
   border-radius:14px;
-  background:linear-gradient(135deg, var(--btn-start), var(--btn-end));
-  box-shadow:
-    0 6px 14px rgba(111,47,144,0.30),
-    0 3px 6px rgba(0,0,0,0.18),
-    inset 0 2px 4px rgba(255,255,255,0.22);
-  cursor:pointer;
-  transition:0.18s ease;
-  font-weight:600;
-}
-
-.btn:active{
-  transform:scale(0.96);
+  color:white;
+  background:linear-gradient(135deg,#A666B0,#573B92);
 }
 
 .msg{
-  height:22px;
   text-align:center;
-  font-weight:600;
-  font-size:14px;
-  margin-top:12px;
-}
-
-.footer-note{
-  font-size:12px;
-  color:#9a9a9a;
   margin-top:14px;
-  text-align:center;
+  font-weight:700;
 }
 </style>
 </head>
 
 <body>
 
-<div class="header-box">
-  <div class="header-title">Enterprise Large and Mega Projects</div>
-  <div class="header-sub">Submit a Request</div>
+<div class="card">
+  <h2>Login</h2>
+
+  <input id="id" class="input" type="text" placeholder="ID">
+  <input id="pass" class="input" type="password" placeholder="Password">
+
+  <button class="btn" onclick="doLogin()">Login</button>
+
+  <div id="msg" class="msg"></div>
 </div>
 
-<main class="wrap">
-  <section class="card">
-
-    <label class="label" for="userid">ID</label>
-    <input id="userid" class="input" type="text" inputmode="numeric">
-
-    <label class="label" for="password">Password</label>
-    <input id="password" class="input" type="password">
-
-    <button class="btn" onclick="login()">Login</button>
-
-    <div id="msg" class="msg"></div>
-
-    <div class="footer-note">
-      Enterprise Project Management | Large & Mega Projects Unit
-    </div>
-
-  </section>
-</main>
-
 <script>
-const API = "https://script.google.com/macros/s/AKfycbwCHjHcNiAFJ68F_GX2XrAsKFe0YkTZgF0AYokY7W3gDq99inb8QF14jAO4IlZiRWR3ng/exec";
+const API = "YOUR_WEB_APP_URL";  // ضع رابط ال Web App هنا
 
-async function login(){
-  const id = document.getElementById("userid").value.trim();
-  const pass = document.getElementById("password").value.trim();
+async function doLogin(){
+  const id = document.getElementById("id").value.trim();
+  const pass = document.getElementById("pass").value.trim();
   const msg = document.getElementById("msg");
 
   if(!id || !pass){
     msg.style.color="red";
-    msg.textContent="Please fill all fields.";
+    msg.textContent="Please fill all fields";
     return;
   }
 
   msg.style.color="#666";
   msg.textContent="Checking...";
 
-  try{
-    const url = `${API}?route=login&id=${encodeURIComponent(id)}&pass=${encodeURIComponent(pass)}`;
-    const r = await fetch(url);
-    const t = await r.text();
+  try {
+    const r = await fetch(`${API}?route=login&id=${id}&pass=${pass}`);
+    const data = await r.json();
 
-    if(t === "correct"){
+    if(data.status === "correct"){
       msg.style.color="green";
-      msg.textContent="Login successful ✔️";
+      msg.textContent="Login Successful ✔️";
 
-      // Save user ID for next page
       localStorage.setItem("ID", id);
+      localStorage.setItem("name", data.name);
 
-      // redirect to logs page
-      setTimeout(()=>{ window.location.href = "logs.html"; }, 400);
+      setTimeout(()=>{ window.location.href="logs.html"; },500);
 
     } else {
       msg.style.color="red";
-      msg.textContent="Invalid ID or Password.";
+      msg.textContent="Invalid ID or Password";
     }
 
-  }catch(e){
+  } catch(e){
     msg.style.color="red";
-    msg.textContent="Connection Error.";
+    msg.textContent="Connection Error";
   }
 }
-
-document.addEventListener("keydown", (e)=>{
-  if(e.key === "Enter") login();
-});
 </script>
 
 </body>
