@@ -25,7 +25,6 @@ html,body{
   color:#111;
 }
 
-/* HEADER */
 .header-box{
   width:100%;
   max-width:420px;
@@ -47,7 +46,6 @@ html,body{
   opacity:0.92;
 }
 
-/* CARD */
 .container{
   padding:22px;
   display:flex;
@@ -63,7 +61,6 @@ html,body{
   margin-top:20px;
 }
 
-/* LABEL */
 .label-title{
   font-size:16px;
   font-weight:700;
@@ -72,7 +69,6 @@ html,body{
   color:#555;
 }
 
-/* INPUTS */
 .input, .input-date, .select{
   width:100%;
   padding:14px 16px;
@@ -82,7 +78,6 @@ html,body{
   margin-bottom:4px;
 }
 
-/* BUTTON */
 .btn-full{
   width:100%;
   padding:16px;
@@ -92,10 +87,6 @@ html,body{
   color:#fff;
   cursor:pointer;
   background:linear-gradient(135deg, var(--btn-start), var(--btn-end));
-  box-shadow:
-    0 6px 14px rgba(111,47,144,0.30),
-    0 3px 6px rgba(0,0,0,0.18),
-    inset 0 2px 4px rgba(255,255,255,0.22);
   display:flex;
   justify-content:center;
   align-items:center;
@@ -103,7 +94,6 @@ html,body{
 }
 .btn-full:active{ transform:scale(0.96); }
 
-/* MESSAGE */
 .msg{
   min-height:24px;
   margin-top:14px;
@@ -126,17 +116,13 @@ html,body{
 <main class="container">
   <section class="card">
 
-    <!-- NAME (AUTO FROM LOOKUP) -->
+    <!-- NAME -->
     <label class="label-title">Name</label>
     <input id="name" class="input" type="text" disabled>
 
-    <!-- CALENDAR -->
-    <label class="label-title">Date</label>
-    <input type="date" id="date" class="input-date"/>
-
     <!-- REQUEST TYPE -->
     <label class="label-title">Request Type</label>
-    <select id="type" class="select">
+    <select id="type" class="select" onchange="toggleDateFields()">
       <option value="" disabled selected>Select Request Type</option>
       <option>Change Work Location</option>
       <option>Annual leave</option>
@@ -149,86 +135,120 @@ html,body{
       <option>Emergency leave</option>
     </select>
 
-    <!-- SUBMIT -->
+    <!-- DATE BOXES NOW AT END -->
+
+    <!-- Single Date -->
+    <div id="singleDateBox" style="margin-top:10px;">
+      <label class="label-title">Date</label>
+      <input type="date" id="date" class="input-date"/>
+    </div>
+
+    <!-- From / To -->
+    <div id="rangeBox" style="display:none; margin-top:10px;">
+      <label class="label-title">From</label>
+      <input type="date" id="fromDate" class="input-date"/>
+
+      <label class="label-title">To</label>
+      <input type="date" id="toDate" class="input-date"/>
+    </div>
+
     <button class="btn-full" onclick="submitRequest()">Submit</button>
 
-    <!-- MESSAGE -->
     <div id="msg" class="msg"></div>
 
   </section>
 </main>
 
 <script>
-/* ========== CHECK LOGIN ========== */
+/* LOGIN CHECK */
 if(!localStorage.getItem("ID")){
   window.location.href = "login.html";
 }
 
-/* ========== LOAD NAME FROM SHEET BY LOOKUP ========== */
+/* LOAD NAME BY LOOKUP */
 (async function loadName() {
   const id = localStorage.getItem("ID");
-  const API = "https://script.google.com/macros/s/AKfycbwCHjHcNiAFJ68F_GX2XrAsKFe0YkTZgF0AYokY7W3gDq99inb8QF14jAO4IlZiRWR3ng/exec";
+  const API = "YOUR_API_URL_HERE";
 
   try {
     const r = await fetch(`${API}?route=getName&id=${id}`);
     const data = await r.json();
-
     if(data.status === "found"){
       localStorage.setItem("name", data.name);
       document.getElementById("name").value = data.name;
-    } else {
-      document.getElementById("name").value = "";
     }
-  } catch (err) {
-    document.getElementById("name").value = "";
-  }
+  } catch {}
 })();
 
-/* ========== API ENDPOINT ========== */
-const API = "https://script.google.com/macros/s/AKfycbwCHjHcNiAFJ68F_GX2XrAsKFe0YkTZgF0AYokY7W3gDq99inb8QF14jAO4IlZiRWR3ng/exec";
+/* SHOW/HIDE DATE INPUTS */
+function toggleDateFields() {
+  const type = document.getElementById("type").value;
+  if(type === "Annual leave" || type === "Sick Leave"){
+    document.getElementById("singleDateBox").style.display = "none";
+    document.getElementById("rangeBox").style.display = "block";
+  } else {
+    document.getElementById("rangeBox").style.display = "none";
+    document.getElementById("singleDateBox").style.display = "block";
+  }
+}
 
+const API = "YOUR_API_URL_HERE";
+
+/* SUBMIT */
 async function submitRequest(){
   const id   = localStorage.getItem("ID");
   const name = localStorage.getItem("name");
-  const date = document.getElementById("date").value;
   const type = document.getElementById("type").value;
   const msg  = document.getElementById("msg");
 
-  if(!date || !type){
-    msg.style.color = "red";
-    msg.textContent = "Please complete all fields!";
+  if(!type){
+    msg.style.color="red";
+    msg.textContent="Please select request type!";
     return;
   }
 
-  msg.style.color = "#666";
-  msg.textContent = "Submitting...";
+  msg.style.color="#666";
+  msg.textContent="Submitting...";
 
-  try{
-    const url =
-      `${API}?route=addLog&id=${encodeURIComponent(id)}&name=${encodeURIComponent(name)}&date=${encodeURIComponent(date)}&type=${encodeURIComponent(type)}`;
+  /* MULTI-DAY REQUESTS */
+  if(type === "Annual leave" || type === "Sick Leave"){
+    const from = document.getElementById("fromDate").value;
+    const to   = document.getElementById("toDate").value;
 
-    const r = await fetch(url);
-    const t = await r.text();
-
-    if(t === "done"){
-      msg.style.color = "green";
-      msg.textContent = "Request submitted ✔";
-
-      setTimeout(()=>{
-        localStorage.removeItem("ID");
-        localStorage.removeItem("name");
-        window.location.href = "login.html";
-      },1500);
-
-    } else {
-      msg.style.color = "red";
-      msg.textContent = "Saving error!";
+    if(!from || !to){
+      msg.style.color="red";
+      msg.textContent="Please select both dates!";
+      return;
     }
 
-  } catch(err){
-    msg.style.color = "red";
-    msg.textContent = "Connection Error";
+    let start = new Date(from);
+    let end   = new Date(to);
+
+    while(start <= end){
+      const d = start.toISOString().split("T")[0];
+      await fetch(`${API}?route=addLog&id=${id}&name=${name}&date=${d}&type=${type}`);
+      start.setDate(start.getDate()+1);
+    }
+
+    msg.style.color="green";
+    msg.textContent="Submitted ✔️";
+    setTimeout(()=> window.location.href="login.html",1500);
+    return;
   }
+
+  /* SINGLE DATE */
+  const date = document.getElementById("date").value;
+  if(!date){
+    msg.style.color="red";
+    msg.textContent="Please select a date!";
+    return;
+  }
+
+  await fetch(`${API}?route=addLog&id=${id}&name=${name}&date=${date}&type=${type}`);
+
+  msg.style.color="green";
+  msg.textContent="Submitted ✔️";
+  setTimeout(()=> window.location.href="login.html",1500);
 }
 </script>
 
