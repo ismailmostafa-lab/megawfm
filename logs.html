@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Enterprise Large and Mega Projects — Requests Log</title>
+<title>Enterprise Large and Mega Projects — Requests</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
 
@@ -25,21 +25,34 @@ html,body{
   color:#111;
 }
 
+/* HEADER */
 .header-box{
   width:100%;
   max-width:420px;
   margin:26px auto 0 auto;
   background:linear-gradient(135deg, var(--btn-start), var(--btn-end));
-  padding:26px 16px 30px;
+  padding:26px 16px 30px 16px;
   border-radius:20px;
   text-align:center;
   color:#fff;
   box-shadow:0 6px 20px rgba(111,47,144,0.22);
 }
-.header-title{ font-size:22px; font-weight:700; }
-.header-sub{ margin-top:6px; font-size:15px; opacity:0.92; }
+.header-title{
+  font-size:22px;
+  font-weight:700;
+}
+.header-sub{
+  margin-top:6px;
+  font-size:15px;
+  opacity:0.92;
+}
 
-.container{ padding:22px; display:flex; justify-content:center; }
+/* CARD */
+.container{
+  padding:22px;
+  display:flex;
+  justify-content:center;
+}
 .card{
   width:100%;
   max-width:420px;
@@ -50,6 +63,7 @@ html,body{
   margin-top:20px;
 }
 
+/* LABEL */
 .label-title{
   font-size:16px;
   font-weight:700;
@@ -58,16 +72,17 @@ html,body{
   color:#555;
 }
 
-.input,.input-date,.select{
+/* INPUTS */
+.input, .input-date, .select{
   width:100%;
   padding:14px 16px;
   border-radius:12px;
   border:1px solid #e0e0e0;
   font-size:16px;
   margin-bottom:4px;
-  background:#fff;
 }
 
+/* BUTTON */
 .btn-full{
   width:100%;
   padding:16px;
@@ -77,35 +92,49 @@ html,body{
   color:#fff;
   cursor:pointer;
   background:linear-gradient(135deg, var(--btn-start), var(--btn-end));
-  box-shadow:0 6px 14px rgba(111,47,144,0.30),
-             0 3px 6px rgba(0,0,0,0.18),
-             inset 0 2px 4px rgba(255,255,255,0.22);
+  box-shadow:
+    0 6px 14px rgba(111,47,144,0.30),
+    0 3px 6px rgba(0,0,0,0.18),
+    inset 0 2px 4px rgba(255,255,255,0.22);
   display:flex;
   justify-content:center;
+  align-items:center;
   margin-top:20px;
 }
 .btn-full:active{ transform:scale(0.96); }
 
-.msg{ min-height:30px; margin-top:14px; text-align:center; font-weight:700; font-size:14px; }
+/* MESSAGE */
+.msg{
+  min-height:24px;
+  margin-top:14px;
+  text-align:center;
+  font-weight:700;
+  font-size:14px;
+}
 </style>
 </head>
 
 <body>
 
+<!-- HEADER -->
 <div class="header-box">
   <div class="header-title">Enterprise Large and Mega Projects</div>
-  <div class="header-sub">Submit Request</div>
+  <div class="header-sub">Request Submission</div>
 </div>
 
+<!-- CONTENT -->
 <main class="container">
   <section class="card">
 
+    <!-- NAME (AUTO FROM LOGIN) -->
     <label class="label-title">Name</label>
     <input id="name" class="input" type="text" disabled>
 
+    <!-- CALENDAR -->
     <label class="label-title">Calendar</label>
     <input type="date" id="date" class="input-date"/>
 
+    <!-- REQUEST TYPE -->
     <label class="label-title">Request Type</label>
     <select id="type" class="select">
       <option value="" disabled selected>Select Request Type</option>
@@ -120,35 +149,35 @@ html,body{
       <option>Emergency leave</option>
     </select>
 
+    <!-- SUBMIT -->
     <button class="btn-full" onclick="submitRequest()">Submit</button>
 
+    <!-- MESSAGE -->
     <div id="msg" class="msg"></div>
 
   </section>
 </main>
 
 <script>
-// يجب أن يكون logged in
-if(!localStorage.getItem("ID")) {
-    window.location.href = "login.html";
+/* ========== CHECK LOGIN ========== */
+if(!localStorage.getItem("ID")){
+  window.location.href = "login.html";
 }
 
-// load name
+/* ========== LOAD NAME FROM LOGIN ========== */
 document.getElementById("name").value = localStorage.getItem("name") || "";
 
-// API URL (نفس سكريبت اللوجين)
+/* ========== API ENDPOINT ========== */
 const API = "https://script.google.com/macros/s/AKfycbwCHjHcNiAFJ68F_GX2XrAsKFe0YkTZgF0AYokY7W3gDq99inb8QF14jAO4IlZiRWR3ng/exec";
 
-async function submitRequest() {
-  const name = document.getElementById("name").value;
+async function submitRequest(){
+  const id   = localStorage.getItem("ID");
+  const name = localStorage.getItem("name");
   const date = document.getElementById("date").value;
   const type = document.getElementById("type").value;
   const msg  = document.getElementById("msg");
-  const id   = localStorage.getItem("ID");
 
-  msg.innerHTML = "";
-
-  if (!date || !type) {
+  if(!date || !type){
     msg.style.color = "red";
     msg.textContent = "Please complete all fields!";
     return;
@@ -157,8 +186,9 @@ async function submitRequest() {
   msg.style.color = "#666";
   msg.textContent = "Submitting...";
 
-  try {
-    const url = `${API}?route=addLog&id=${encodeURIComponent(id)}&name=${encodeURIComponent(name)}&date=${encodeURIComponent(date)}&type=${encodeURIComponent(type)}`;
+  try{
+    const url =
+      `${API}?route=addLog&id=${encodeURIComponent(id)}&name=${encodeURIComponent(name)}&date=${encodeURIComponent(date)}&type=${encodeURIComponent(type)}`;
 
     const r = await fetch(url);
     const t = await r.text();
@@ -167,27 +197,22 @@ async function submitRequest() {
       msg.style.color = "green";
       msg.textContent = "Request submitted ✔";
 
-      setTimeout(()=>{
-        msg.innerHTML += "<div style='color:red; margin-top:6px; font-weight:700;'>Please don't forget adding to Oracle</div>";
-      },300);
-
+      // clear and logout after success
       setTimeout(()=>{
         localStorage.removeItem("ID");
         localStorage.removeItem("name");
         window.location.href = "login.html";
-      },1800);
+      },1500);
 
-      document.getElementById("date").value = "";
-      document.getElementById("type").selectedIndex = 0;
-    }
-    else {
-      msg.style.color="red";
-      msg.textContent="Error saving data.";
+    } else {
+      msg.style.color = "red";
+      msg.textContent = "Saving error!";
     }
 
-  } catch (e) {
+  } catch(err){
+    console.log(err);
     msg.style.color = "red";
-    msg.textContent = "Connection Error!";
+    msg.textContent = "Connection Error";
   }
 }
 </script>
