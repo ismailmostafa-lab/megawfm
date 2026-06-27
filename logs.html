@@ -4,128 +4,83 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Enterprise Large and Mega Projects — Requests</title>
-
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
-
 <style>
 :root{
-  --we-purple:#6f2f90;
   --muted:#6b6b6b;
   --bg:#f4f1fb;
   --card:#fff;
   --btn-start:#A666B0;
   --btn-end:#573B92;
 }
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;margin:0;padding:0;}
+html,body{background:var(--bg);font-family:'Cairo',sans-serif;color:#111;}
 
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-html,body{
-  margin:0;
-  background:var(--bg);
-  font-family:'Cairo',sans-serif;
-  color:#111;
-}
+.header-box{width:100%;max-width:420px;margin:26px auto 0 auto;background:linear-gradient(135deg,var(--btn-start),var(--btn-end));padding:26px 16px 30px 16px;border-radius:20px;text-align:center;color:#fff;box-shadow:0 6px 20px rgba(111,47,144,0.22);}
+.header-title{font-size:22px;font-weight:700;-webkit-animation:fadeDown 0.6s cubic-bezier(0.22,1,0.36,1) both;animation:fadeDown 0.6s cubic-bezier(0.22,1,0.36,1) both;}
+.header-sub{margin-top:6px;font-size:15px;opacity:0.92;-webkit-animation:fadeDown 0.6s cubic-bezier(0.22,1,0.36,1) 0.15s both;animation:fadeDown 0.6s cubic-bezier(0.22,1,0.36,1) 0.15s both;}
+@-webkit-keyframes fadeDown{from{opacity:0;-webkit-transform:translateY(-18px);}to{opacity:1;-webkit-transform:translateY(0);}}
+@keyframes fadeDown{from{opacity:0;transform:translateY(-18px);}to{opacity:1;transform:translateY(0);}}
 
-.header-box{
-  width:100%;
-  max-width:420px;
-  margin:26px auto 0 auto;
-  background:linear-gradient(135deg, var(--btn-start), var(--btn-end));
-  padding:26px 16px 30px 16px;
-  border-radius:20px;
-  text-align:center;
-  color:#fff;
-  box-shadow:0 6px 20px rgba(111,47,144,0.22);
-}
-.header-title{ font-size:22px; font-weight:700; }
-.header-sub{ margin-top:6px; font-size:15px; opacity:0.92; }
+.container{padding:22px;display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;}
+.card{width:100%;max-width:420px;background:var(--card);border-radius:20px;padding:26px;box-shadow:0 8px 28px rgba(0,0,0,0.08);margin-top:20px;}
 
-.container{
-  padding:22px;
-  display:flex;
-  justify-content:center;
-}
-.card{
-  width:100%;
-  max-width:420px;
-  background:var(--card);
-  border-radius:20px;
-  padding:26px;
-  box-shadow:0 8px 28px rgba(0,0,0,0.08);
-  margin-top:20px;
-}
+.label-title{font-size:16px;font-weight:700;margin-bottom:10px;margin-top:16px;color:#555;}
+.input,.input-date,.select{display:block;width:100%;padding:14px 16px;border-radius:12px;border:1px solid #e0e0e0;font-size:16px;font-family:'Cairo',sans-serif;margin-bottom:4px;background:#fff;color:#111;}
 
-.label-title{
-  font-size:16px;
-  font-weight:700;
-  margin-bottom:10px;
-  margin-top:16px;
-  color:#555;
-}
+/* ===== SUBMIT BUTTON ===== */
+.btn-full{width:100%;height:56px;padding:0;font-size:17px;font-family:'Cairo',sans-serif;font-weight:700;border:none;border-radius:14px;color:#fff;cursor:pointer;background:linear-gradient(135deg,var(--btn-start),var(--btn-end));box-shadow:0 6px 14px rgba(111,47,144,0.30),0 3px 6px rgba(0,0,0,0.18);position:relative;overflow:hidden;-webkit-appearance:none;margin-top:20px;}
+.btn-full:active{-webkit-transform:scale(0.96);transform:scale(0.96);}
+.btn-full:disabled{opacity:0.75;cursor:not-allowed;}
+.btn-full.success{background:linear-gradient(135deg,#2e7d32,#1b5e20)!important;}
 
-.input, .input-date, .select{
-  width:100%;
-  padding:14px 16px;
-  border-radius:12px;
-  border:1px solid #e0e0e0;
-  font-size:16px;
-  margin-bottom:4px;
-}
+.btn-inner{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-align:center;-webkit-align-items:center;align-items:center;-webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;gap:8px;height:100%;width:100%;}
 
-.btn-full{
-  width:100%;
-  padding:16px;
-  font-size:17px;
-  border:none;
-  border-radius:14px;
-  color:#fff;
-  cursor:pointer;
-  background:linear-gradient(135deg, var(--btn-start), var(--btn-end));
-  box-shadow:
-    0 6px 14px rgba(111,47,144,0.30),
-    0 3px 6px rgba(0,0,0,0.18),
-    inset 0 2px 4px rgba(255,255,255,0.22);
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  margin-top:20px;
-}
+.spinner{width:20px;height:20px;border:2.5px solid rgba(255,255,255,0.35);border-top-color:#fff;border-radius:50%;-webkit-animation:spin 0.7s linear infinite;animation:spin 0.7s linear infinite;display:none;-webkit-flex-shrink:0;flex-shrink:0;}
+@-webkit-keyframes spin{to{-webkit-transform:rotate(360deg);}}
+@keyframes spin{to{transform:rotate(360deg);}}
 
-.btn-full:active{ transform:scale(0.96); }
+.check-wrap{display:none;width:22px;height:22px;-webkit-flex-shrink:0;flex-shrink:0;}
+.check-wrap svg{width:22px;height:22px;stroke:#fff;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;fill:none;}
+.check-path{stroke-dasharray:24;stroke-dashoffset:24;-webkit-transition:stroke-dashoffset 0.35s ease 0.1s;transition:stroke-dashoffset 0.35s ease 0.1s;}
+.check-path.drawn{stroke-dashoffset:0;}
 
-.msg{
-  min-height:24px;
-  margin-top:14px;
-  text-align:center;
-  font-weight:700;
-  font-size:14px;
-}
+@-webkit-keyframes shake{0%,100%{-webkit-transform:translateX(0);}20%{-webkit-transform:translateX(-8px);}40%{-webkit-transform:translateX(8px);}60%{-webkit-transform:translateX(-5px);}80%{-webkit-transform:translateX(5px);}}
+@keyframes shake{0%,100%{transform:translateX(0);}20%{transform:translateX(-8px);}40%{transform:translateX(8px);}60%{transform:translateX(-5px);}80%{transform:translateX(5px);}}
+.shake{-webkit-animation:shake 0.4s ease!important;animation:shake 0.4s ease!important;}
 
-.days-box{
-  font-size:16px;
-  font-weight:700;
-  margin-top:10px;
-  color:#333;
-}
+/* ===== PULSE MSGS ===== */
+.pulse-msg-warn,.pulse-msg{display:none;text-align:center;margin-top:10px;font-size:14px;font-weight:700;-webkit-animation:pulseText 0.5s ease;animation:pulseText 0.5s ease;}
+.pulse-msg-warn{color:#e65100;}
+.pulse-msg{color:#c62828;}
+@-webkit-keyframes pulseText{0%{opacity:0;-webkit-transform:scale(0.7);}60%{-webkit-transform:scale(1.1);}100%{opacity:1;-webkit-transform:scale(1);}}
+@keyframes pulseText{0%{opacity:0;transform:scale(0.7);}60%{transform:scale(1.1);}100%{opacity:1;transform:scale(1);}}
+
+.pulse-icon-warn,.pulse-icon-wrap{width:44px;height:44px;border-radius:50%;display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-align:center;-webkit-align-items:center;align-items:center;-webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;margin:0 auto 6px auto;-webkit-animation:pulsering 0.6s ease 0.1s;animation:pulsering 0.6s ease 0.1s;}
+.pulse-icon-warn{background:#fff3e0;}
+.pulse-icon-wrap{background:#ffebee;}
+@-webkit-keyframes pulsering{0%{-webkit-transform:scale(0.5);}70%{-webkit-transform:scale(1.15);}100%{-webkit-transform:scale(1);}}
+@keyframes pulsering{0%{transform:scale(0.5);}70%{transform:scale(1.15);}100%{transform:scale(1);}}
+
+.pulse-msg-success{display:none;text-align:center;margin-top:10px;font-size:14px;font-weight:700;color:#2e7d32;-webkit-animation:pulseText 0.5s ease;animation:pulseText 0.5s ease;}
+.pulse-icon-success{width:44px;height:44px;border-radius:50%;background:#e8f5e9;display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-align:center;-webkit-align-items:center;align-items:center;-webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;margin:0 auto 6px auto;-webkit-animation:pulsering 0.6s ease 0.1s;animation:pulsering 0.6s ease 0.1s;}
+
+.days-box{font-size:16px;font-weight:700;margin-top:10px;color:#333;}
 </style>
 </head>
-
 <body>
 
-<!-- HEADER -->
 <div class="header-box">
   <div class="header-title">Enterprise Large and Mega Projects</div>
   <div class="header-sub">Request Submission</div>
 </div>
 
-<!-- CONTENT -->
 <main class="container">
   <section class="card">
 
-    <!-- NAME -->
     <label class="label-title">Name</label>
     <input id="name" class="input" type="text" disabled>
 
-    <!-- REQUEST TYPE -->
     <label class="label-title">Request Type</label>
     <select id="type" class="select" onchange="toggleDates()">
       <option value="" disabled selected>Select Request Type</option>
@@ -140,205 +95,238 @@ html,body{
       <option>Emergency leave</option>
     </select>
 
-    <!-- SINGLE DATE -->
     <div id="singleDateDiv" style="margin-top:10px;">
       <label class="label-title">Date</label>
       <input type="date" id="date" class="input-date"/>
     </div>
 
-    <!-- RANGE DATE -->
-    <div id="rangeDiv" style="margin-top:10px; display:none;">
+    <div id="rangeDiv" style="margin-top:10px;display:none;">
       <label class="label-title">From</label>
       <input type="date" id="fromDate" class="input-date" oninput="calcDays()"/>
-
       <label class="label-title">To</label>
       <input type="date" id="toDate" class="input-date" oninput="calcDays()"/>
-
       <div id="daysCount" class="days-box" style="display:none;">Days: 0</div>
     </div>
 
-    <button class="btn-full" onclick="submitRequest()">Submit</button>
+    <button class="btn-full" id="submitBtn" onclick="submitRequest()">
+      <div class="btn-inner">
+        <div class="spinner" id="spinner"></div>
+        <div class="check-wrap" id="checkWrap">
+          <svg viewBox="0 0 22 22"><polyline class="check-path" id="checkPath" points="4,11 9,16 18,6"/></svg>
+        </div>
+        <span id="btnText">Submit</span>
+      </div>
+    </button>
 
-    <div id="msg" class="msg"></div>
+    <!-- PULSE MSGS -->
+    <div id="msgType" class="pulse-msg-warn">
+      <div class="pulse-icon-warn">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#e65100" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+      </div>
+      Please select request type!
+    </div>
+    <div id="msgDate" class="pulse-msg-warn">
+      <div class="pulse-icon-warn">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#e65100" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+        </svg>
+      </div>
+      Please select a date!
+    </div>
+    <div id="msgBothDates" class="pulse-msg-warn">
+      <div class="pulse-icon-warn">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#e65100" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+        </svg>
+      </div>
+      Please select both dates!
+    </div>
+    <div id="msgInvalidDates" class="pulse-msg">
+      <div class="pulse-icon-wrap">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#c62828" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+          <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+        </svg>
+      </div>
+      Please add valid dates
+    </div>
+    <div id="msgSuccess" class="pulse-msg-success">
+      <div class="pulse-icon-success">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="#2e7d32" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="4,11 9,16 18,6"/>
+        </svg>
+      </div>
+      Submitted ✔
+    </div>
 
   </section>
 </main>
 
 <script>
-/* CHECK LOGIN */
-if(!localStorage.getItem("ID")){
-  window.location.href = "login.html";
+var API = "https://script.google.com/macros/s/AKfycbwCHjHcNiAFJ68F_GX2XrAsKFe0YkTZgF0AYokY7W3gDq99inb8QF14jAO4IlZiRWR3ng/exec";
+
+if(!localStorage.getItem('ID')) window.location.href = 'login.html';
+
+var submitBtn  = document.getElementById('submitBtn');
+var spinner    = document.getElementById('spinner');
+var checkWrap  = document.getElementById('checkWrap');
+var checkPath  = document.getElementById('checkPath');
+var btnText    = document.getElementById('btnText');
+
+var allMsgs = ['msgType','msgDate','msgBothDates','msgInvalidDates','msgSuccess'];
+
+function hideAllMsgs(){
+  allMsgs.forEach(function(id){
+    document.getElementById(id).style.display = 'none';
+  });
 }
 
-/* LOAD NAME */
-(async function loadName(){
-  const id  = localStorage.getItem("ID");
-  const API = "https://script.google.com/macros/s/AKfycbwCHjHcNiAFJ68F_GX2XrAsKFe0YkTZgF0AYokY7W3gDq99inb8QF14jAO4IlZiRWR3ng/exec";
+function showPulse(id){
+  var el = document.getElementById(id);
+  el.style.display = 'none';
+  void el.offsetWidth;
+  el.style.display = 'block';
+}
 
-  try{
-    const r = await fetch(`${API}?route=getName&id=${id}`);
-    const j = await r.json();
-    if(j.status === "found"){
-      localStorage.setItem("name", j.name);
-      document.getElementById("name").value = j.name;
-    }
-  }catch(e){}
+function shakeBtn(){
+  submitBtn.classList.remove('shake');
+  void submitBtn.offsetWidth;
+  submitBtn.classList.add('shake');
+}
+
+function setLoading(){
+  submitBtn.disabled      = true;
+  spinner.style.display   = 'block';
+  checkWrap.style.display = 'none';
+  btnText.textContent     = 'Submitting...';
+  btnText.style.opacity   = '0.75';
+  hideAllMsgs();
+}
+
+function setSuccess(){
+  spinner.style.display   = 'none';
+  submitBtn.classList.add('success');
+  checkWrap.style.display = 'block';
+  setTimeout(function(){ checkPath.classList.add('drawn'); }, 60);
+  btnText.textContent   = 'Submitted!';
+  btnText.style.opacity = '1';
+  hideAllMsgs();
+  showPulse('msgSuccess');
+}
+
+function resetBtn(){
+  submitBtn.classList.remove('success');
+  checkWrap.style.display = 'none';
+  checkPath.classList.remove('drawn');
+  btnText.textContent   = 'Submit';
+  btnText.style.opacity = '1';
+  submitBtn.disabled    = false;
+}
+
+(function loadName(){
+  var id = localStorage.getItem('ID');
+  fetch(API + '?route=getName&id=' + id)
+    .then(function(r){ return r.json(); })
+    .then(function(j){
+      if(j.status === 'found'){
+        localStorage.setItem('name', j.name);
+        document.getElementById('name').value = j.name;
+      }
+    }).catch(function(){});
 })();
 
-/* SHOW/HIDE DATE INPUTS */
 function toggleDates(){
-  const type = document.getElementById("type").value;
-
-  if(type === "Annual leave" || type === "Sick Leave"){
-    document.getElementById("singleDateDiv").style.display = "none";
-    document.getElementById("rangeDiv").style.display      = "block";
-    document.getElementById("daysCount").style.display     = "none";
+  var type = document.getElementById('type').value;
+  if(type === 'Annual leave' || type === 'Sick Leave'){
+    document.getElementById('singleDateDiv').style.display = 'none';
+    document.getElementById('rangeDiv').style.display      = 'block';
+    document.getElementById('daysCount').style.display     = 'none';
   } else {
-    document.getElementById("rangeDiv").style.display      = "none";
-    document.getElementById("singleDateDiv").style.display = "block";
+    document.getElementById('rangeDiv').style.display      = 'none';
+    document.getElementById('singleDateDiv').style.display = 'block';
   }
 }
 
-/* COUNT WORKING DAYS ONLY */
 function calcDays(){
-  const from = document.getElementById("fromDate").value;
-  const to   = document.getElementById("toDate").value;
-  const box  = document.getElementById("daysCount");
-
-  if(!from || !to){
-    box.style.display = "none";
-    return;
-  }
-
-  let s = new Date(from);
-  let e = new Date(to);
-
-  if(s > e){
-    box.style.display = "block";
-    box.style.color = "red";
-    box.textContent = "Days: 0";
-    return;
-  }
-
-  let working = 0;
-  let d = new Date(s);
-
+  var from = document.getElementById('fromDate').value;
+  var to   = document.getElementById('toDate').value;
+  var box  = document.getElementById('daysCount');
+  if(!from || !to){ box.style.display = 'none'; return; }
+  var s = new Date(from), e = new Date(to);
+  if(s > e){ box.style.display='block'; box.style.color='red'; box.textContent='Days: 0'; return; }
+  var working = 0, d = new Date(s);
   while(d <= e){
-    const day = d.getDay(); // 5=Friday, 6=Saturday
-    if(day !== 5 && day !== 6){
-      working++;
-    }
+    var day = d.getDay();
+    if(day !== 5 && day !== 6) working++;
     d.setDate(d.getDate()+1);
   }
-
-  box.style.display = "block";
-  box.textContent = "Days: " + working;
-
-  if(working > 5){
-    box.style.color = "red";
-  } else {
-    box.style.color = "#333";
-  }
+  box.style.display = 'block';
+  box.textContent   = 'Days: ' + working;
+  box.style.color   = working > 5 ? 'red' : '#333';
 }
 
-const API = "https://script.google.com/macros/s/AKfycbwCHjHcNiAFJ68F_GX2XrAsKFe0YkTZgF0AYokY7W3gDq99inb8QF14jAO4IlZiRWR3ng/exec";
+function submitRequest(){
+  var id   = localStorage.getItem('ID');
+  var name = localStorage.getItem('name');
+  var type = document.getElementById('type').value;
 
-/* SUBMIT REQUEST */
-async function submitRequest(){
-  const id   = localStorage.getItem("ID");
-  const name = localStorage.getItem("name");
-  const type = document.getElementById("type").value;
-  const msg  = document.getElementById("msg");
+  if(!type){ hideAllMsgs(); shakeBtn(); showPulse('msgType'); return; }
 
-  if(!type){
-    msg.style.color="red";
-    msg.textContent="Please select request type!";
-    return;
-  }
+  if(type === 'Annual leave' || type === 'Sick Leave'){
+    var from = document.getElementById('fromDate').value;
+    var to   = document.getElementById('toDate').value;
+    if(!from || !to){ hideAllMsgs(); shakeBtn(); showPulse('msgBothDates'); return; }
+    var s = new Date(from), e = new Date(to);
+    if(s > e){ hideAllMsgs(); shakeBtn(); showPulse('msgInvalidDates'); return; }
 
-  msg.style.color="#666";
-  msg.textContent="Submitting...";
+    setLoading();
 
-  /* MULTI-DAY (WORKING DAYS ONLY) */
-  if(type === "Annual leave" || type === "Sick Leave"){
-    const from = document.getElementById("fromDate").value;
-    const to   = document.getElementById("toDate").value;
-
-    if(!from || !to){
-      msg.style.color="red";
-      msg.textContent="Please select both dates!";
-      return;
-    }
-
-    let s = new Date(from);
-    let e = new Date(to);
-
-    if(s > e){
-      msg.style.color = "red";
-      msg.textContent = "Please add a valid dates";
-      return;
-    }
-
-    while(s <= e){
-      const day = s.getDay();
-
-      // Skip Friday (5) & Saturday (6)
+    var promises = [];
+    var d = new Date(s);
+    while(d <= e){
+      var day = d.getDay();
       if(day !== 5 && day !== 6){
-        const d = s.toISOString().split("T")[0];
-        await fetch(`${API}?route=addLog&id=${id}&name=${name}&date=${d}&type=${type}`);
+        var dateStr = d.toISOString().split('T')[0];
+        promises.push(fetch(API + '?route=addLog&id=' + id + '&name=' + name + '&date=' + dateStr + '&type=' + encodeURIComponent(type)));
       }
-
-      s.setDate(s.getDate()+1);
+      d.setDate(d.getDate()+1);
     }
 
-    msg.style.color="green";
-    msg.textContent="Submitted ✔";
-
-    setTimeout(()=>{
-      const extra = document.createElement("div");
-      extra.style.color="red";
-      extra.style.fontWeight="700";
-      extra.style.marginTop="6px";
-      extra.innerHTML="Don't forget adding request to Oracle<br>Please Send an email to Managers";
-      msg.appendChild(extra);
-    },300);
-
-    setTimeout(()=>{
-      localStorage.clear();
-      window.location.href = "login.html";
-    },3000);
-
+    Promise.all(promises)
+      .then(function(){
+        setSuccess();
+        setTimeout(function(){
+          var extra = document.createElement('div');
+          extra.style.cssText = 'color:red;font-weight:700;margin-top:6px;text-align:center;font-size:13px;';
+          extra.innerHTML = "Don't forget adding request to Oracle<br>Please Send an email to Managers";
+          document.getElementById('msgSuccess').appendChild(extra);
+        }, 400);
+        setTimeout(function(){ localStorage.clear(); window.location.href = 'login.html'; }, 3000);
+      })
+      .catch(function(){ resetBtn(); });
     return;
   }
 
-  /* SINGLE DATE */
-  const date = document.getElementById("date").value;
-  if(!date){
-    msg.style.color="red";
-    msg.textContent="Please select a date!";
-    return;
-  }
+  var date = document.getElementById('date').value;
+  if(!date){ hideAllMsgs(); shakeBtn(); showPulse('msgDate'); return; }
 
-  await fetch(`${API}?route=addLog&id=${id}&name=${name}&date=${date}&type=${type}`);
+  setLoading();
 
-  msg.style.color="green";
-  msg.textContent="Submitted ✔";
-
-  setTimeout(()=>{
-    const extra = document.createElement("div");
-    extra.style.color="red";
-    extra.style.fontWeight="700";
-    extra.style.marginTop="6px";
-    extra.innerHTML="Don't forget adding request to Oracle<br>Please Send an email to Managers";
-    msg.appendChild(extra);
-  },300);
-
-  setTimeout(()=>{
-    localStorage.clear();
-    window.location.href="login.html";
-  },3000);
+  fetch(API + '?route=addLog&id=' + id + '&name=' + name + '&date=' + date + '&type=' + encodeURIComponent(type))
+    .then(function(){
+      setSuccess();
+      setTimeout(function(){
+        var extra = document.createElement('div');
+        extra.style.cssText = 'color:red;font-weight:700;margin-top:6px;text-align:center;font-size:13px;';
+        extra.innerHTML = "Don't forget adding request to Oracle<br>Please Send an email to Managers";
+        document.getElementById('msgSuccess').appendChild(extra);
+      }, 400);
+      setTimeout(function(){ localStorage.clear(); window.location.href = 'login.html'; }, 3000);
+    })
+    .catch(function(){ resetBtn(); });
 }
 </script>
-
 </body>
 </html>
