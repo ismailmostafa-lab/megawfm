@@ -28,6 +28,12 @@ html,body{background:var(--bg);font-family:'Cairo',sans-serif;color:#111;}
 .label-title{font-size:16px;font-weight:700;margin-bottom:10px;margin-top:16px;color:#555;}
 .input,.input-date,.select{display:block;width:100%;padding:14px 16px;border-radius:12px;border:1px solid #e0e0e0;font-size:16px;font-family:'Cairo',sans-serif;margin-bottom:4px;background:#fff;color:#111;}
 
+/* ===== BALANCE BOX (Remaining Annual / Permission) ===== */
+.balance-box{display:none;background:#f7f3fc;border:1px solid #e3d5f0;border-radius:12px;padding:12px 16px;margin-top:18px;}
+.balance-line{display:none;font-size:14px;font-weight:700;color:#573B92;-webkit-box-pack:justify;-webkit-justify-content:space-between;justify-content:space-between;}
+.balance-line.shown{display:-webkit-box;display:-webkit-flex;display:flex;}
+.balance-line span.val{color:#111;}
+
 /* ===== SUBMIT BUTTON ===== */
 .btn-full{width:100%;height:56px;padding:0;font-size:17px;font-family:'Cairo',sans-serif;font-weight:700;border:none;border-radius:14px;color:#fff;cursor:pointer;background:linear-gradient(135deg,var(--btn-start),var(--btn-end));box-shadow:0 6px 14px rgba(111,47,144,0.30),0 3px 6px rgba(0,0,0,0.18);position:relative;overflow:hidden;-webkit-appearance:none;margin-top:20px;}
 .btn-full:active{-webkit-transform:scale(0.96);transform:scale(0.96);}
@@ -123,6 +129,12 @@ html,body{background:var(--bg);font-family:'Cairo',sans-serif;color:#111;}
       <div id="daysCount" class="days-box" style="display:none;">Days: 0</div>
     </div>
 
+    <!-- REMAINING BALANCE (shows only the line relevant to the selected type) -->
+    <div id="balanceBox" class="balance-box">
+      <div class="balance-line" id="annualLine"><span>Remaining Annual Leaves:</span><span class="val" id="remainingAnnualVal">-</span></div>
+      <div class="balance-line" id="permissionLine"><span>Remaining Permissions:</span><span class="val" id="remainingPermissionVal">-</span></div>
+    </div>
+
     <button class="btn-full" id="submitBtn" onclick="submitRequest()">
       <div class="btn-inner">
         <div class="spinner" id="spinner"></div>
@@ -167,6 +179,24 @@ html,body{background:var(--bg);font-family:'Cairo',sans-serif;color:#111;}
       </div>
       Please add valid dates
     </div>
+    <div id="msgNotEnoughAnnual" class="pulse-msg">
+      <div class="pulse-icon-wrap">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#c62828" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+          <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+        </svg>
+      </div>
+      Not enough Annual Leave balance for the selected days!
+    </div>
+    <div id="msgNotEnoughPermission" class="pulse-msg">
+      <div class="pulse-icon-wrap">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#c62828" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+          <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+        </svg>
+      </div>
+      Not enough monthly Permission balance!
+    </div>
     <div id="msgSuccess" class="pulse-msg-success">
       <div class="pulse-icon-success">
         <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="#2e7d32" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -185,7 +215,7 @@ html,body{background:var(--bg);font-family:'Cairo',sans-serif;color:#111;}
 </main>
 
 <script>
-var API = "https://script.google.com/macros/s/AKfycbwCHjHcNiAFJ68F_GX2XrAsKFe0YkTZgF0AYokY7W3gDq99inb8QF14jAO4IlZiRWR3ng/exec";
+var API = "https://script.google.com/macros/s/AKfycbynTv4xZY-HhgmDBa4qfUUx4Rq7q1LYikNM7i76lJGzfSisXV6O_5VW7uUnHcU055Ka/exec";
 
 if(!localStorage.getItem('ID')) window.location.href = 'login.html';
 
@@ -195,7 +225,20 @@ var checkWrap  = document.getElementById('checkWrap');
 var checkPath  = document.getElementById('checkPath');
 var btnText    = document.getElementById('btnText');
 
-var allMsgs = ['msgType','msgDate','msgBothDates','msgInvalidDates','msgSuccess','oracleBox'];
+var allMsgs = ['msgType','msgDate','msgBothDates','msgInvalidDates','msgNotEnoughAnnual','msgNotEnoughPermission','msgSuccess','oracleBox'];
+
+// Remaining balance holders (filled by loadRemaining)
+var remainingAnnual = null;
+var remainingPermissionMinutes = null;
+
+// Minutes value for each Permission request type
+var permissionMinutesMap = {
+  "Permission 30 minute": 30,
+  "Permission 1 Hour": 60,
+  "Permission 2 Hours": 120,
+  "Permission 3 Hours": 180,
+  "Permission 4 Hours": 240
+};
 
 function hideAllMsgs(){
   allMsgs.forEach(function(id){
@@ -257,6 +300,50 @@ function resetBtn(){
     }).catch(function(){});
 })();
 
+(function loadRemaining(){
+  var id = localStorage.getItem('ID');
+  fetch(API + '?route=getRemaining&id=' + id)
+    .then(function(r){ return r.json(); })
+    .then(function(j){
+      if(j.status === 'found'){
+        remainingAnnual = j.remainingAnnual;
+        remainingPermissionMinutes = j.remainingPermissionMinutes;
+        document.getElementById('remainingAnnualVal').textContent = remainingAnnual + ' day(s)';
+        document.getElementById('remainingPermissionVal').textContent = j.remainingPermissionHM;
+        // Re-apply visibility in case the type was already selected before data arrived
+        updateBalanceDisplay(document.getElementById('type').value);
+      }
+    }).catch(function(){});
+})();
+
+// ---- Shows only the balance line relevant to the currently selected type ----
+function updateBalanceDisplay(type){
+  var box = document.getElementById('balanceBox');
+  var annualLine = document.getElementById('annualLine');
+  var permissionLine = document.getElementById('permissionLine');
+
+  annualLine.classList.remove('shown');
+  permissionLine.classList.remove('shown');
+
+  var hasData = (remainingAnnual !== null && remainingPermissionMinutes !== null);
+
+  if(!hasData || !type){
+    box.style.display = 'none';
+    return;
+  }
+
+  if(type === 'Annual leave'){
+    annualLine.classList.add('shown');
+    box.style.display = 'block';
+  } else if(permissionMinutesMap[type] !== undefined){
+    permissionLine.classList.add('shown');
+    box.style.display = 'block';
+  } else {
+    // Change Work Location / Sick Leave -> no relevant balance to show
+    box.style.display = 'none';
+  }
+}
+
 function toggleDates(){
   var type = document.getElementById('type').value;
   if(type === 'Annual leave' || type === 'Sick Leave'){
@@ -267,6 +354,7 @@ function toggleDates(){
     document.getElementById('rangeDiv').style.display      = 'none';
     document.getElementById('singleDateDiv').style.display = 'block';
   }
+  updateBalanceDisplay(type);
 }
 
 function calcDays(){
@@ -287,6 +375,17 @@ function calcDays(){
   box.style.color   = working > 5 ? 'red' : '#333';
 }
 
+function countWorkingDays(from, to){
+  var s = new Date(from), e = new Date(to);
+  var working = 0, d = new Date(s);
+  while(d <= e){
+    var day = d.getDay();
+    if(day !== 5 && day !== 6) working++;
+    d.setDate(d.getDate()+1);
+  }
+  return working;
+}
+
 function submitRequest(){
   var id   = localStorage.getItem('ID');
   var name = localStorage.getItem('name');
@@ -300,6 +399,13 @@ function submitRequest(){
     if(!from || !to){ hideAllMsgs(); shakeBtn(); showPulse('msgBothDates'); return; }
     var s = new Date(from), e = new Date(to);
     if(s > e){ hideAllMsgs(); shakeBtn(); showPulse('msgInvalidDates'); return; }
+
+    var working = countWorkingDays(from, to);
+
+    // ---- BALANCE CHECK (Annual leave only) — reject upfront, nothing gets logged ----
+    if(type === 'Annual leave' && remainingAnnual !== null && working > remainingAnnual){
+      hideAllMsgs(); shakeBtn(); showPulse('msgNotEnoughAnnual'); return;
+    }
 
     setLoading();
 
@@ -326,6 +432,14 @@ function submitRequest(){
 
   var date = document.getElementById('date').value;
   if(!date){ hideAllMsgs(); shakeBtn(); showPulse('msgDate'); return; }
+
+  // ---- BALANCE CHECK (Permission types only) — reject upfront, nothing gets logged ----
+  if(permissionMinutesMap[type] !== undefined && remainingPermissionMinutes !== null){
+    var neededMinutes = permissionMinutesMap[type];
+    if(neededMinutes > remainingPermissionMinutes){
+      hideAllMsgs(); shakeBtn(); showPulse('msgNotEnoughPermission'); return;
+    }
+  }
 
   setLoading();
 
