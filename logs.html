@@ -23,10 +23,15 @@ html,body{background:var(--bg);font-family:'Cairo',sans-serif;color:#111;}
 @keyframes fadeDown{from{opacity:0;transform:translateY(-18px);}to{opacity:1;transform:translateY(0);}}
 
 .container{padding:22px;display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;}
-.card{width:100%;max-width:420px;background:var(--card);border-radius:20px;padding:26px;box-shadow:0 8px 28px rgba(0,0,0,0.08);margin-top:20px;}
+.card{width:100%;max-width:420px;background:var(--card);border-radius:20px;padding:26px;box-shadow:0 8px 28px rgba(0,0,0,0.08);margin-top:20px;overflow:hidden;}
 
 .label-title{font-size:16px;font-weight:700;margin-bottom:10px;margin-top:16px;color:#555;}
 .input,.input-date,.select{display:block;width:100%;padding:14px 16px;border-radius:12px;border:1px solid #e0e0e0;font-size:16px;font-family:'Cairo',sans-serif;margin-bottom:4px;background:#fff;color:#111;}
+
+/* ===== DATE FIELD WRAPPER + CALENDAR ICON ===== */
+.date-field{position:relative;min-width:0;}
+.date-field .input-date{min-width:0;max-width:100%;padding-right:44px;-webkit-appearance:none;appearance:none;}
+.date-field .cal-icon{position:absolute;top:50%;right:14px;-webkit-transform:translateY(-50%);transform:translateY(-50%);pointer-events:none;width:20px;height:20px;}
 
 /* ===== BALANCE BOX (Remaining Annual / Permission) ===== */
 .balance-box{display:none;background:#f7f3fc;border:1px solid #e3d5f0;border-radius:12px;padding:12px 16px;margin-top:18px;}
@@ -118,14 +123,29 @@ html,body{background:var(--bg);font-family:'Cairo',sans-serif;color:#111;}
 
     <div id="singleDateDiv" style="margin-top:10px;">
       <label class="label-title">Date</label>
-      <input type="date" id="date" class="input-date"/>
+      <div class="date-field">
+        <input type="date" id="date" class="input-date"/>
+        <svg class="cal-icon" viewBox="0 0 24 24" fill="none" stroke="#8a8a8a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+        </svg>
+      </div>
     </div>
 
     <div id="rangeDiv" style="margin-top:10px;display:none;">
       <label class="label-title">From</label>
-      <input type="date" id="fromDate" class="input-date" oninput="calcDays()"/>
+      <div class="date-field">
+        <input type="date" id="fromDate" class="input-date" oninput="calcDays()"/>
+        <svg class="cal-icon" viewBox="0 0 24 24" fill="none" stroke="#8a8a8a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+        </svg>
+      </div>
       <label class="label-title">To</label>
-      <input type="date" id="toDate" class="input-date" oninput="calcDays()"/>
+      <div class="date-field">
+        <input type="date" id="toDate" class="input-date" oninput="calcDays()"/>
+        <svg class="cal-icon" viewBox="0 0 24 24" fill="none" stroke="#8a8a8a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+        </svg>
+      </div>
       <div id="daysCount" class="days-box" style="display:none;">Days: 0</div>
     </div>
 
